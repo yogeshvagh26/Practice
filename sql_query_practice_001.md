@@ -956,3 +956,884 @@
 <br/><br/><br/><br/>
 
 #### Happy Practicing! 😊✨
+
+<br/><br/><br/><br/>
+
+---
+
+Awesome! Let's dive into Phase 2. I'll use the same tables (employees, products, customers) from Phase 1.
+
+#### ⚠️ CRITICAL SETUP REMINDER:
+
+Since we'll be using `UPDATE`, `DELETE`, and `TRUNCATE` (which permanently change/remove data), **please re-run the INSERT statements from Phase 1** after you finish each destructive exercise to reset your data. I'll also give you a quick reset script at the end.
+
+---
+
+## 📦 Quick Reset Script (Run this whenever your data gets messed up)
+
+```sql
+
+-- Re-insert all original data (copy this block and run it after any DELETE/UPDATE/TRUNCATE)
+TRUNCATE TABLE employees;
+TRUNCATE TABLE products;
+TRUNCATE TABLE customers;
+
+INSERT INTO employees (employee_id, first_name, last_name, department, salary, hire_date) VALUES
+(1, 'John', 'Smith', 'Sales', 65000, '2020-01-15'),
+(2, 'Emma', 'Johnson', 'Marketing', 72000, '2019-03-22'),
+(3, 'Michael', 'Brown', 'Sales', 58000, '2021-07-01'),
+(4, 'Sarah', 'Davis', 'IT', 85000, '2018-11-10'),
+(5, 'David', 'Miller', 'IT', 79000, '2020-06-19'),
+(6, 'Laura', 'Wilson', 'Marketing', 67000, '2022-02-28'),
+(7, 'James', 'Moore', 'Sales', 61000, '2021-09-14'),
+(8, 'Linda', 'Taylor', 'HR', 55000, '2020-12-01'),
+(9, 'Robert', 'Anderson', 'IT', 92000, '2017-05-05'),
+(10, 'Mary', 'Thomas', 'HR', 48000, '2023-01-20');
+
+INSERT INTO products (product_id, product_name, category, price, stock_quantity) VALUES
+(101, 'Laptop Pro', 'Electronics', 1200.00, 15),
+(102, 'Wireless Mouse', 'Accessories', 25.50, 200),
+(103, 'USB-C Hub', 'Accessories', 45.00, 0),
+(104, 'Monitor 27"', 'Electronics', 350.00, 8),
+(105, 'Desk Lamp', 'Furniture', 40.00, 45),
+(106, 'Gaming Keyboard', 'Electronics', 95.00, 12),
+(107, 'Office Chair', 'Furniture', 250.00, 5),
+(108, 'HDMI Cable', 'Accessories', 15.00, 150),
+(109, 'Smartphone X', 'Electronics', 999.00, 0),
+(110, 'Notebook Pack', 'Office', 12.00, 300);
+
+INSERT INTO customers (customer_id, first_name, last_name, city, state, signup_date) VALUES
+(201, 'Alice', 'Walker', 'New York', 'NY', '2022-05-10'),
+(202, 'Bob', 'Green', 'Los Angeles', 'CA', '2021-08-21'),
+(203, 'Charlie', 'Adams', 'Chicago', 'IL', '2023-02-14'),
+(204, 'Diana', 'Nelson', 'Houston', 'TX', '2020-11-01'),
+(205, 'Ethan', 'Carter', 'Phoenix', 'AZ', '2019-07-19'),
+(206, 'Fiona', 'Mitchell', 'New York', 'NY', '2022-12-05'),
+(207, 'George', 'Perez', 'Los Angeles', 'CA', '2023-06-30'),
+(208, 'Hannah', 'Roberts', 'Chicago', 'IL', '2021-04-17');
+
+```
+
+---
+
+## 📝 PART 2: PRACTICE QUESTIONS + SOLUTIONS (Phase 2)
+
+### SECTION A: AND, OR, NOT (Combining Conditions)
+
+#### Q1. Select all employees who are in the `Sales` department AND earn more than `60000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE department = 'Sales' AND salary > 60000;
+```
+
+</details>
+
+---
+
+#### Q2. Select all products from the `Accessories` category OR products with a price less than `20`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE category = 'Accessories' OR price < 20;
+```
+
+</details>
+
+----
+#### Q3. Select all customers who are **NOT** from `New York` city.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE NOT city = 'New York';
+    -- OR: SELECT * FROM customers WHERE city != 'New York';
+```
+</details>
+
+---
+#### Q4. Select employees who are in `IT` **AND** (have a salary greater than `80000` **OR** were hired after `2020-01-01`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE department = 'IT' AND 
+        (salary > 80000 OR hire_date > '2020-01-01');
+```
+</details>
+
+---
+#### Q5. Select products that are **NOT** in the `Electronics` category **AND** have a stock quantity greater than `10`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE NOT category = 'Electronics' AND 
+        stock_quantity > 10;
+```
+</details>
+
+---
+#### Q6. Select employees who are in HR OR Marketing, but NOT those with a salary above 70000.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE (department = 'HR' OR department = 'Marketing') AND 
+        NOT salary > 70000;
+```        
+</details>
+
+---
+#### Q7. Select customers from `CA` **OR** `NY`, but **NOT** those who signed up after `2023-01-01`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE (state = 'CA' OR state = 'NY') AND 
+        NOT signup_date > '2023-01-01';
+```        
+</details>
+
+---
+
+### SECTION B: IN Operator (Multiple Values)
+
+---
+#### Q8. Select all employees who work in `Sales`, `IT`, **or** `Marketing` (use IN).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE department IN ('Sales', 'IT', 'Marketing');
+```    
+</details>
+
+---
+#### Q9. Select all products whose category is `Electronics` **or** `Furniture`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE category IN ('Electronics', 'Furniture');
+```
+</details>
+
+---
+#### Q10. Select all customers who live in `New York`, `Chicago`, **or** `Houston`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE city IN ('New York', 'Chicago', 'Houston');
+```    
+</details>
+
+---
+#### Q11. Select employees with employee IDs `1`, `5`, **and** `9` (use IN).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE employee_id IN (1, 5, 9);
+```    
+</details>
+
+---
+#### Q12. Select all products with prices `25.50`, `45.00`, or `999.00`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE price IN (25.50, 45.00, 999.00);
+```    
+</details>
+
+
+---
+#### Q13. Select all employees **NOT** in the `Sales` **or** `HR` departments.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE department NOT IN ('Sales', 'HR');
+```    
+</details>
+
+---
+
+### SECTION C: BETWEEN (Range Filtering)
+
+---
+#### Q14. Select employees with a salary between `60000` and `80000` (inclusive).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE salary BETWEEN 60000 AND 80000;
+```    
+</details>
+
+---
+#### Q15. Select products with a price between `20` and `100` (inclusive).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE price BETWEEN 20 AND 100;
+```    
+</details>
+
+---
+#### Q16. Select customers who signed up between `2021-01-01` **and** `2022-12-31`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE signup_date BETWEEN '2021-01-01' AND '2022-12-31';
+```    
+</details>
+
+
+---
+#### Q17. Select products with stock quantity between `10` and `100`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE stock_quantity BETWEEN 10 AND 100;
+``` 
+</details>
+
+---
+#### Q18. Select employees hired between `2019-01-01` and `2020-12-31`, **AND** with salary between `50000` and `70000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE hire_date BETWEEN '2019-01-01' AND '2020-12-31' 
+    AND salary BETWEEN 50000 AND 70000;
+```    
+</details>
+
+---
+#### Q19. Select products **NOT** between price `100` and `500`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE price NOT BETWEEN 100 AND 500;
+```    
+</details>
+
+---
+
+### SECTION D: LIKE & Wildcards (Pattern Matching)
+
+
+---
+#### Q20. Select employees whose `first name` starts with `J`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE first_name LIKE 'J%';
+```    
+</details>
+
+---
+#### Q21. Select employees whose `last name` ends with `son`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE last_name LIKE '%son';
+```    
+</details>
+
+---
+#### Q22. Select customers whose `first name` contains `an`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE first_name LIKE '%an%';
+```    
+</details>
+
+---
+#### Q23. Select products whose `product name` starts with `Laptop`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE product_name LIKE 'Laptop%';
+```    
+</details>
+
+
+---
+#### Q24. Select employees whose `first name` has exactly `5` letters (use underscore _).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE first_name LIKE '_____';
+```
+</details>
+
+--- 
+#### Q25. Select employees whose `first name` is `4` letters long and `starts` with '`M`' (e.g., `Mary`, `Mark`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE first_name LIKE 'M___';
+```    
+</details>
+
+---
+#### Q26. Select products whose name has '`Book`' anywhere in it (case-sensitive depends on DB, but generally works).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE product_name LIKE '%Book%';
+```    
+</details>
+
+
+---
+#### Q27. Select customers whose `email` – wait, we don't have email column. Instead:
+
+> Select customers whose last name has '`er`' as the 2nd and 3rd letters (e.g., Perez, Carter).
+
+> **Pattern**: _er% (any char, then 'er', then anything).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE last_name LIKE '_er%';
+```
+</details>
+
+
+---
+#### Q28. Select all employees whose `first name` does **NOT** start with '`L`'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE first_name NOT LIKE 'L%';
+```    
+</details>
+
+---
+#### Q29. Select products whose category has exactly `10` characters (hint: __________ – 10 underscores).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE category LIKE '__________';
+    -- Electronics (12 chars), Accessories (12), Furniture (9), Office (6). None? Actually 'Furniture' is 9, 'Office' is 6. So maybe 12 underscores for 'Accessories'.
+
+    -- Let's do 12 underscores for 'Electronics' and 'Accessories'.
+    SELECT * 
+    FROM products 
+    WHERE category LIKE '____________';
+```    
+</details>
+
+---
+#### Q30. Select employees whose `last name` contains '`a`' as the second character.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE last_name LIKE '_a%';
+```    
+</details>
+
+---
+
+### SECTION E: UPDATE (Modifying Data)
+
+🛑 Remember to run the RESET script after these to restore data for later questions!
+
+---
+#### Q31. Give a `10%` salary raise to all employees in the `Sales` department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE employees 
+    SET salary = salary * 1.10 
+    WHERE department = 'Sales';
+    -- Check: SELECT * FROM employees WHERE department = 'Sales';
+```
+</details>
+
+---
+#### Q32. Update the `stock_quantity` of the `Wireless Mouse` to `250`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET stock_quantity = 250 
+    WHERE product_name = 'Wireless Mouse';
+```    
+</details>
+
+---
+#### Q33. Change the city of customer Ethan Carter to `Scottsdale`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE customers 
+    SET city = 'Scottsdale' 
+    WHERE first_name = 'Ethan' AND last_name = 'Carter';
+```    
+</details>
+
+---
+#### Q34. Increase the `price` of all Accessories by `5%`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET price = price * 1.05 
+    WHERE category = 'Accessories';
+```    
+</details>
+
+---
+#### Q35. Set the department of employee Mary Thomas to `Finance`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE employees 
+    SET department = 'Finance' 
+    WHERE first_name = 'Mary' AND last_name = 'Thomas';
+```    
+</details>
+
+---
+#### Q36. Reduce the price of all products by `10%` that currently have `0` stock.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET price = price * 0.90 
+    WHERE stock_quantity = 0;
+```    
+</details>
+
+---
+#### Q37. Update the `signup_date` of all customers from `NY` to `'2024-01-01'`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE customers 
+    SET signup_date = '2024-01-01' 
+    WHERE state = 'NY';
+```    
+</details>
+
+---
+#### Q38. Give a flat `5000` bonus to all employees earning less than `60000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE employees 
+    SET salary = salary + 5000 
+    WHERE salary < 60000;
+```    
+</details>
+
+---
+#### Q39. Update the `stock_quantity` of all Electronics to `20` (only if they are currently less than 20).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET stock_quantity = 20 
+    WHERE category = 'Electronics' AND 
+        stock_quantity < 20;
+```        
+</details>
+
+---
+
+### SECTION F: DELETE (Removing Rows)
+
+**🛑 Remember to run the RESET script after these!**
+
+---
+#### Q40. Delete all employees in the `HR` department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM employees 
+    WHERE department = 'HR';
+```
+</details>
+
+
+---
+#### Q41. Delete all products that have `0` stock quantity.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM products 
+    WHERE stock_quantity = 0;
+```    
+</details>
+
+---
+#### Q42. Delete customers who signed up before `2020-01-01`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM customers 
+    WHERE signup_date < '2020-01-01';
+```    
+</details>
+
+---
+#### Q43. Delete employees who work in `IT` and earn less than `80000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM employees 
+    WHERE department = 'IT' AND salary < 80000;
+```    
+</details>
+
+
+---
+#### Q44. Delete all products where the category is `Office` **OR** `price` is greater than `1000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM products 
+    WHERE category = 'Office' OR price > 1000;
+```
+</details>
+
+---
+#### Q45. Delete customers whose city is `Chicago` and state is `IL`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM customers 
+    WHERE city = 'Chicago' AND state = 'IL';
+```    
+</details>
+
+
+---
+#### Q46. Delete all employees whose `first_name` starts with '`L`' (Laura and Linda).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM employees 
+    WHERE first_name LIKE 'L%';
+```    
+</details>
+
+---
+
+### SECTION G: TRUNCATE (Removing All Rows Quickly)
+
+**⚠️ TRUNCATE removes ALL rows from a table and resets auto-increment (if any). It cannot be rolled back in many databases. Always run the RESET script afterward!**
+
+---
+#### Q47. Delete all rows from the products table using `TRUNCATE`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    TRUNCATE TABLE products;
+    -- Now SELECT * FROM products; will return empty.
+    -- Run the reset script to repopulate.
+```    
+</details>
+
+---
+#### Q48. Delete all rows from the customers table using `TRUNCATE`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    TRUNCATE TABLE customers;
+```    
+</details>
+
+---
+#### Q49. Empty the employees table using `TRUNCATE`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    TRUNCATE TABLE employees;
+```    
+</details>
+
+---
+
+
+### SECTION H: Mixed Scenarios (Combining Everything)
+
+
+---
+#### Q50. Select all products where the `product_name` contains the word `Pro` **OR** the `price` is between `200` and `1000`, and sort them by price `descending`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * FROM products 
+    WHERE product_name LIKE '%Pro%' OR 
+        price BETWEEN 200 AND 1000 
+    ORDER BY price DESC;
+```    
+</details>
+
+---
+#### Q51. Give a `15%` salary increase to all `IT` employees, but only if they earn less than `85000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE employees 
+    SET salary = salary * 1.15 
+    WHERE department = 'IT' AND salary < 85000;
+```    
+</details>
+
+---
+#### Q52. Delete all products whose `product_name` starts with `USB` **AND** have a price less than `50`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM products 
+    WHERE product_name LIKE 'USB%' AND price < 50;
+```    
+</details>
+
+---
+#### Q53. Select all customers whose state is `CA` or `NY`, whose city does **NOT** start with `L`, and sort them by `signup_date` (oldest first).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE state IN ('CA', 'NY') AND city NOT LIKE 'L%' 
+    ORDER BY signup_date ASC;
+```    
+</details>
+
+---
+#### Q54. Update the `category` of all products with a price above `500` to Premium Electronics.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET category = 'Premium Electronics' WHERE price > 500;
+```    
+</details>
+
+---
+#### Q55. Delete all employees `hired` in the year `2021` (hint: hire_date BETWEEN '2021-01-01' AND '2021-12-31').
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM employees 
+    WHERE hire_date BETWEEN '2021-01-01' AND '2021-12-31';
+```    
+</details>
+
+--- 
+#### Q56. Select distinct `departments` from the employees table, but only for departments where the employee's `last name` contains the letter `r` (using LIKE).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT department 
+    FROM employees 
+    WHERE last_name LIKE '%r%';
+```    
+</details>
+
+ 
+---
+#### Q57. Increase the stock of all products in the Accessories category by `50` units, but only if the current stock is less than `100`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET stock_quantity = stock_quantity + 50 
+    WHERE category = 'Accessories' AND stock_quantity < 100;
+```    
+</details>
+
+---
+#### Q58. Delete customers whose `signup_date` is in the year `2022` (hint: signup_date BETWEEN '2022-01-01' AND '2022-12-31').
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM customers 
+    WHERE signup_date 
+    BETWEEN '2022-01-01' AND '2022-12-31';
+```    
+</details>
+
+---
+#### Q59. Update the `salary` of all `Marketing` employees to be exactly `75000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE employees 
+    SET salary = 75000 
+    WHERE department = 'Marketing';
+```    
+</details>
+
+---
+#### Q60. Select all products where the `product_name` has exactly `10` characters (including spaces) using `LIKE` with `underscores`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM products 
+    WHERE product_name LIKE '__________';
+    -- That's 10 underscores. 'Desk Lamp' is 9 (space counts), 'HDMI Cable' is 10 (space counts). So it will work.
+```    
+</details>
+
+---
+### 🎯 BONUS: Complex UPDATE with WHERE + LIKE + IN
+---
+
+#### Q61. Add a $`20` surcharge to all products whose category is `Furniture` **OR** whose name ends with `X` (like Smartphone X).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    UPDATE products 
+    SET price = price + 20 
+    WHERE category = 'Furniture' OR product_name LIKE '%X';
+```    
+</details>
+
+---
+#### Q62. Delete all employees whose `first name` ends with `h` **AND** whose `salary` is greater than `60000` **OR** whose department is `HR` (be careful with parentheses!).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    DELETE FROM employees 
+    WHERE (first_name LIKE '%h' AND salary > 60000) OR 
+        department = 'HR';
+```        
+</details>
+ 
+---
+
+## 📌 Final Pro-Tips:
+
+* **Always** use a `SELECT` with your `WHERE` clause first to verify which rows will be affected before running an `UPDATE` or `DELETE`.
+
+* For `TRUNCATE`, remember it's faster but resets auto-increment and cannot be filtered (it deletes everything).
+
+---
+<br/><br/><br/><br/>
+
+#### Happy Practicing! 😊✨
+
+<br/><br/><br/><br/>
+---
