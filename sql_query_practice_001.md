@@ -8,7 +8,7 @@
 * **SECTION C**: ORDER BY (Sorting)
 * **SECTION D**: LIMIT (Restricting Rows)
 * **SECTION E**: DISTINCT (Removing Duplicates)
-* **SECTION F**: SECTION F: Mixing Everything (SELECT, WHERE, ORDER BY, LIMIT, DISTINCT
+* **SECTION F**: Mixing Everything (SELECT, WHERE, ORDER BY, LIMIT, DISTINCT)
 * **SECTION G**: More SELECT Projections (Specific Columns)
 * **SECTION H**: Complex WHERE + ORDER + LIMIT
 * **SECTION I**: Harder Practice (Still within topics)
