@@ -1837,3 +1837,1206 @@ INSERT INTO customers (customer_id, first_name, last_name, city, state, signup_d
 
 <br/><br/><br/><br/>
 ---
+
+Excellent! Let's power through Phase 3. We'll use the same `employees`, `products`, and `customers` tables.
+
+Since we're working with Functions, the data won't be permanently changed (except we might use `UPDATE` with functions, but we'll mostly `SELECT`). Still, I recommend running the reset script from Phase 2 once at the start just to be safe.
+
+---
+
+## 🛠️ Quick Reset (Run once to ensure data is correct)
+
+
+```sql
+
+    TRUNCATE TABLE employees;
+    TRUNCATE TABLE products;
+    TRUNCATE TABLE customers;
+
+    INSERT INTO employees (employee_id, first_name, last_name, department, salary, hire_date) VALUES
+    (1, 'John', 'Smith', 'Sales', 65000, '2020-01-15'),
+    (2, 'Emma', 'Johnson', 'Marketing', 72000, '2019-03-22'),
+    (3, 'Michael', 'Brown', 'Sales', 58000, '2021-07-01'),
+    (4, 'Sarah', 'Davis', 'IT', 85000, '2018-11-10'),
+    (5, 'David', 'Miller', 'IT', 79000, '2020-06-19'),
+    (6, 'Laura', 'Wilson', 'Marketing', 67000, '2022-02-28'),
+    (7, 'James', 'Moore', 'Sales', 61000, '2021-09-14'),
+    (8, 'Linda', 'Taylor', 'HR', 55000, '2020-12-01'),
+    (9, 'Robert', 'Anderson', 'IT', 92000, '2017-05-05'),
+    (10, 'Mary', 'Thomas', 'HR', 48000, '2023-01-20');
+
+    INSERT INTO products (product_id, product_name, category, price, stock_quantity) VALUES
+    (101, 'Laptop Pro', 'Electronics', 1200.00, 15),
+    (102, 'Wireless Mouse', 'Accessories', 25.50, 200),
+    (103, 'USB-C Hub', 'Accessories', 45.00, 0),
+    (104, 'Monitor 27"', 'Electronics', 350.00, 8),
+    (105, 'Desk Lamp', 'Furniture', 40.00, 45),
+    (106, 'Gaming Keyboard', 'Electronics', 95.00, 12),
+    (107, 'Office Chair', 'Furniture', 250.00, 5),
+    (108, 'HDMI Cable', 'Accessories', 15.00, 150),
+    (109, 'Smartphone X', 'Electronics', 999.00, 0),
+    (110, 'Notebook Pack', 'Office', 12.00, 300);
+
+    INSERT INTO customers (customer_id, first_name, last_name, city, state, signup_date) VALUES
+    (201, 'Alice', 'Walker', 'New York', 'NY', '2022-05-10'),
+    (202, 'Bob', 'Green', 'Los Angeles', 'CA', '2021-08-21'),
+    (203, 'Charlie', 'Adams', 'Chicago', 'IL', '2023-02-14'),
+    (204, 'Diana', 'Nelson', 'Houston', 'TX', '2020-11-01'),
+    (205, 'Ethan', 'Carter', 'Phoenix', 'AZ', '2019-07-19'),
+    (206, 'Fiona', 'Mitchell', 'New York', 'NY', '2022-12-05'),
+    (207, 'George', 'Perez', 'Los Angeles', 'CA', '2023-06-30'),
+    (208, 'Hannah', 'Roberts', 'Chicago', 'IL', '2021-04-17');
+
+```
+
+## 📝 PART 3: PRACTICE QUESTIONS + SOLUTIONS (Phase 3)
+
+
+### SECTION A: String Functions (`CONCAT`, `UPPER`, `LOWER`, `LENGTH`, `SUBSTRING`, `REPLACE`, `LEFT`, `RIGHT`, `TRIM`)
+
+---
+
+#### Q1. Show the full name of each employee as one column (e.g., "John Smith") using CONCAT.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+
+    SELECT CONCAT(first_name, ' ', last_name) AS full_name 
+    FROM employees;
+```    
+
+</details>
+
+---
+
+#### Q2. Show all product names in UPPERCASE.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT UPPER(product_name) AS product_upper 
+    FROM products;
+```    
+</details>
+
+
+---
+#### Q3. Show all customer cities in lowercase.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT LOWER(city) AS city_lower 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q4. Find the length (number of characters) of each employee's last name.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        last_name, 
+        LENGTH(last_name) AS name_length 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q5. Extract the first 3 characters of every product name.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        LEFT(product_name, 3) AS first_3 
+    FROM products;
+```    
+</details>
+
+---
+#### Q6. Extract the last 4 characters of every customer's first name.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        RIGHT(first_name, 4) AS last_4 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q7. Show a substring of the `product_name` starting from position 1, length 5 (e.g., "Lapto", "Wirel").
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        SUBSTRING(product_name, 1, 5) AS sub_name
+    FROM products;
+```    
+</details>
+
+---
+#### Q8. Replace the word `Pro` with `Premium` in all product names.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        REPLACE(product_name, 'Pro', 'Premium') AS updated_name 
+    FROM products;
+```    
+</details>
+
+---
+#### Q9. Show the full name of each customer (first + last) in uppercase.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CONCAT(UPPER(first_name), ' ', UPPER(last_name)) AS full_upper 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q10. Count how many characters are in each product's `category` and show it alongside the category.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        LENGTH(category) AS category_length 
+    FROM products;
+```        
+</details>
+
+---
+#### Q11. Show the first 4 letters of each employee's `department` and the last 4 letters of their `last_name`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        LEFT(department, 4) AS dept_prefix, last_name, 
+        RIGHT(last_name, 4) AS name_suffix 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q12. Create a new column called `email_username` that combines the first letter of `first_name` and the entire `last_name` (e.g., JSmith).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        last_name, 
+        CONCAT(LEFT(first_name, 1), last_name) AS email_username 
+    FROM employees;
+```    
+</details>
+
+---
+### SECTION B: Numeric Functions (`ROUND`, `CEILING`, `FLOOR`, `ABS`, `MOD`)
+
+---
+#### Q13. Show the `price` of all products, rounded to the nearest whole number.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, 
+        ROUND(price) AS rounded_price 
+    FROM products;
+```
+</details>
+
+
+---
+#### Q14. Round the `price` to 1 decimal place.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, 
+        ROUND(price, 1) AS price_1dec 
+    FROM products;
+```    
+</details>
+
+---
+#### Q15. Use `CEILING` to round all product prices up to the next whole number.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, 
+        CEILING(price) AS ceil_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q16. Use `FLOOR` to round all product prices down to the previous whole number.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, 
+        FLOOR(price) AS floor_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q17. Calculate the absolute difference between `salary` and `70000` for each employee (use `ABS`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        salary, 
+        ABS(salary - 70000) AS diff_from_70k 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q18. Find the remainder (modulo) when `stock_quantity` is divided by `10` (use `MOD`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        stock_quantity, 
+        MOD(stock_quantity, 10) AS remainder 
+    FROM products;
+```    
+</details>
+
+---
+#### Q19. Calculate the total value of inventory for each product (price * stock_quantity) and round it to 2 decimal places.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        ROUND(price * stock_quantity, 2) AS inventory_value 
+    FROM products;
+```    
+</details>
+
+
+---
+#### Q20. Show the `salary` divided by `12` (monthly salary), rounded to the nearest integer.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        salary, 
+        ROUND(salary / 12) AS monthly_salary 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q21. Use CEILING on the average of price and stock_quantity for each product (just for practice).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        CEILING((price + stock_quantity) / 2) AS ceil_avg 
+    FROM products;
+```    
+</details>
+
+---
+
+### SECTION C: Date Functions (`YEAR`, `MONTH`, `DAY`, `CURDATE`, `DATEDIFF`, `DATE_ADD`, `NOW`)
+
+---
+#### Q22. Extract the `YEAR` from the `hire_date` of each employee.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        YEAR(hire_date) AS hire_year 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q23. Extract the `MONTH` (as a number) from the `signup_date` of each customer.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        MONTH(signup_date) AS signup_month 
+    FROM customers;
+```    
+</details>
+
+
+---
+#### Q25. Calculate how many days each employee has been working at the company (from `hire_date` to today's date). Use `DATEDIFF` and `CURDATE()`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        DATEDIFF(CURDATE(), hire_date) AS days_employed 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q26. Calculate how many years ago each customer signed up (approximate, using `DATEDIFF` / 365).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        ROUND(DATEDIFF(CURDATE(), signup_date) / 365, 1) AS years_ago 
+    FROM customers;
+```    
+</details>
+
+
+---
+#### Q27. Add 1 year to the `hire_date` of each employee (use `DATE_ADD`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        DATE_ADD(hire_date, INTERVAL 1 YEAR) AS one_year_later 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q28. Add 30 days to the `signup_date` of each customer.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        DATE_ADD(signup_date, INTERVAL 30 DAY) AS plus_30_days 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q29. Show the current date and time using `NOW()`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT NOW() AS current_datetime;
+```    
+</details>
+
+---
+#### Q30. Show only the `YEAR` and `MONTH` of each `signup_date` in a single column (e.g., "2022-05").
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        CONCAT(YEAR(signup_date), '-', LPAD(MONTH(signup_date), 2, '0')) AS year_month 
+    FROM customers;
+    -- Note: LPAD is a string function to ensure 2 digits.
+```    
+</details>
+
+---
+#### Q31. Find employees hired in the month of `January` (month = 1).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE MONTH(hire_date) = 1;
+```    
+</details>
+
+---
+#### Q32. Find customers who signed up on a day between 1 and 15 of any month.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE DAY(signup_date) BETWEEN 1 AND 15;
+```    
+</details>
+
+---
+
+### SECTION D: Aggregate Functions (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`)
+
+---
+#### Q22. Extract the `YEAR` from the `hire_date` of each employee.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        YEAR(hire_date) AS hire_year 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q23. Extract the `MONTH` (as a number) from the `signup_date` of each customer.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        MONTH(signup_date) AS signup_month 
+    FROM customers;
+```    
+</details>
+
+
+---
+#### Q24. Extract the `DAY` from the `hire_date` of each employee.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        DAY(hire_date) AS hire_day 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q25. Calculate how many days each employee has been working at the company (from `hire_date` to today's date). Use `DATEDIFF` and `CURDATE()`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        DATEDIFF(CURDATE(), hire_date) AS days_employed 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q26. Calculate how many years ago each customer signed up (approximate, using `DATEDIFF` / 365).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        ROUND(DATEDIFF(CURDATE(), signup_date) / 365, 1) AS years_ago 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q27. Add 1 year to the `hire_date` of each employee (use `DATE_ADD`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        DATE_ADD(hire_date, INTERVAL 1 YEAR) AS one_year_later 
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q28. Add 30 days to the `signup_date` of each customer.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date, 
+        DATE_ADD(signup_date, INTERVAL 30 DAY) AS plus_30_days 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q29. Show the current date and time using `NOW()`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT NOW() AS current_datetime;
+```    
+</details>
+
+---
+#### Q30. Show only the `YEAR` and `MONTH` of each `signup_date` in a single column (e.g., "2022-05").
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        CONCAT(YEAR(signup_date), '-', LPAD(MONTH(signup_date), 2, '0')) AS year_month 
+    FROM customers;
+    
+    -- Note: LPAD is a string function to ensure 2 digits.
+```    
+</details>
+
+---
+#### Q31. Find employees hired in the month of `January` (month = 1).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM employees 
+    WHERE MONTH(hire_date) = 1;
+```    
+</details>
+
+---
+#### Q32. Find customers who signed up on a day between 1 and 15 of any month.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT * 
+    FROM customers 
+    WHERE DAY(signup_date) BETWEEN 1 AND 15;
+```    
+</details>
+
+---
+
+### SECTION D: Aggregate Functions (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`)
+
+---
+#### Q33. Count the total number of employees in the company.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS total_employees 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q34. Count the total number of distinct departments in the company.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(DISTINCT department) AS distinct_depts 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q35. Calculate the total sum of all employee salaries (total payroll).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(salary) AS total_payroll 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q35. Calculate the total sum of all employee salaries (total payroll).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(salary) AS total_payroll 
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q36. Calculate the average salary of all employees.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(salary) AS avg_salary 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q37. Find the highest salary in the company.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MAX(salary) AS highest_salary 
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q38. Find the lowest salary in the company.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MIN(salary) AS lowest_salary 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q39. Count the number of products in the `products` table.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS product_count 
+    FROM products;
+```        
+</details>
+
+---
+#### Q40. Find the total value of all products in stock (sum of `price * stock_quantity`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(price * stock_quantity) AS total_inventory_value 
+    FROM products;
+```    
+</details>
+
+---
+#### Q41. Find the average price of all products.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(price) AS avg_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q42. Find the most expensive product price.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MAX(price) AS max_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q43. Find the cheapest product price.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MIN(price) AS min_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q44. Count the total number of customers.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS customer_count 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q45. Find the earliest signup date among customers.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MIN(signup_date) AS earliest_signup 
+    FROM customers;
+```    
+</details>
+
+---
+#### Q46. Find the most recent signup date among customers.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MAX(signup_date) AS latest_signup 
+    FROM customers;
+```    
+</details>
+
+
+---
+#### Q47. Count how many employees work in the IT department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS it_count 
+    FROM employees 
+    WHERE department = 'IT';
+```    
+</details>
+
+
+---
+#### Q48. Calculate the total salary paid to `Sales` employees.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(salary) AS sales_payroll 
+    FROM employees 
+    WHERE department = 'Sales';
+```    
+</details>
+
+
+---
+#### Q49. Find the average salary of employees in the `Marketing` department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(salary) AS marketing_avg 
+    FROM employees 
+    WHERE department = 'Marketing';
+```    
+</details>
+
+---
+#### Q50. Find the highest salary in the `HR` department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT MAX(salary) AS hr_max 
+    FROM employees 
+    WHERE department = 'HR';
+```    
+</details>
+
+
+---
+#### Q51. Count the number of products that have `0` stock.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS out_of_stock 
+    FROM products 
+    WHERE stock_quantity = 0;
+```    
+</details>
+
+
+---
+#### Q52. Find the total stock quantity of all products combined.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(stock_quantity) AS total_stock 
+    FROM products;
+```    
+</details>
+
+---
+
+### SECTION E: Mixing Functions (Combining Everything)
+
+---
+#### Q53. Show the full name of each employee (in uppercase) and the length of their full name.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CONCAT(UPPER(first_name), ' ', UPPER(last_name)) AS full_upper,
+        LENGTH(CONCAT(first_name, ' ', last_name)) AS full_length 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q54. Find the average length of all product names.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(LENGTH(product_name)) AS avg_name_length 
+    FROM products;
+```    
+</details>
+
+---
+#### Q55. Show the minimum, maximum, and average salary, and round the average to 2 decimal places.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        MIN(salary) AS min_sal, 
+        MAX(salary) AS max_sal, 
+        ROUND(AVG(salary), 2) AS avg_sal 
+    FROM employees;
+```     
+</details>
+
+---
+#### Q56. Count the number of employees hired in each year?
+**Wait** – that needs GROUP BY, which is not explicitly in the list. Let's avoid it.
+Instead: Count employees hired in 2020 specifically.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS hired_in_2020 
+    FROM employees 
+    WHERE YEAR(hire_date) = 2020;
+```    
+</details>
+
+---
+#### Q57. Calculate the total salary paid to all employees, but only for employees whose first name starts with J or M.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(salary) AS total_j_m_salaries 
+    FROM employees 
+    WHERE first_name LIKE 'J%' OR first_name LIKE 'M%';
+```    
+</details>
+
+---
+#### Q58. Find the average price of products in the `Electronics` and `Furniture` categories combined.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(price) AS avg_electronics_furniture 
+    FROM products 
+    WHERE category IN ('Electronics', 'Furniture');
+```    
+</details>
+
+---
+#### Q59. Show the earliest and latest `hire_date` for the `IT` department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        MIN(hire_date) AS earliest_hire, 
+        MAX(hire_date) AS latest_hire 
+    FROM employees 
+    WHERE department = 'IT';
+```    
+</details>
+
+---
+#### Q60. Count how many customers have a `last_name` that contains the letter `e` (case-insensitive, use `LIKE`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS last_name_has_e 
+    FROM customers 
+    WHERE last_name LIKE '%e%';
+```    
+</details>
+
+---
+#### Q61. Calculate the total stock value (`price * stock_quantity`) for all products in the `Accessories` category, and round the result to 2 decimals.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT ROUND(SUM(price * stock_quantity), 2) AS accessories_value 
+    FROM products 
+    WHERE category = 'Accessories';
+```    
+</details>
+
+
+---
+#### Q62. Show the employee `first_name`, their `salary`, and the `salary` divided by the `LENGTH` of their `last_name`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        last_name, 
+        salary, 
+        ROUND(salary / LENGTH(last_name), 2) AS salary_per_char 
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q63. Find the total number of characters in all product names combined (sum of lengths).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT SUM(LENGTH(product_name)) AS total_name_length 
+    FROM products;
+```    
+</details>
+
+
+---
+#### Q64. Show the `product_name`, `price`, and the price rounded up (`CEILING`) and rounded down (`FLOOR`), all in one query.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, 
+        CEILING(price) AS ceil_price, 
+        FLOOR(price) AS floor_price 
+    FROM products;
+```    
+</details>
+
+---
+#### Q65. Find the average stock quantity, but only for products that have a price greater than `50`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT AVG(stock_quantity) AS avg_stock_high_price 
+    FROM products 
+    WHERE price > 50;
+```    
+</details>
+
+---
+#### Q66. Calculate how many months (rounded) each employee has been with the company, using `DATEDIFF` and dividing by 30.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        hire_date, 
+        ROUND(DATEDIFF(CURDATE(), hire_date) / 30, 0) AS months_employed 
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q67. Show the minimum and maximum stock quantity, and the difference between them.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        MIN(stock_quantity) AS min_stock, 
+        MAX(stock_quantity) AS max_stock, 
+        MAX(stock_quantity) - MIN(stock_quantity) AS difference 
+    FROM products;
+```    
+</details>
+
+---
+#### Q68. Count the total number of employees, the total salary sum, and the average salary – all with descriptive column aliases.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        COUNT(*) AS total_emps, 
+        SUM(salary) AS total_payroll, 
+        ROUND(AVG(salary), 2) AS avg_salary 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q69. Find the most recent `hire_date` and the oldest `hire_date` overall.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        MAX(hire_date) AS latest_hire, 
+        MIN(hire_date) AS earliest_hire 
+    FROM employees;
+```    
+</details>
+
+---
+#### Q70. Show the product name and price, but for the price, show its absolute difference from `500` (use `ABS`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price, ABS(price - 500) AS diff_from_500 
+    FROM products;
+```    
+</details>
+
+---
+
+### 🎯 BONUS: Complex Expressions with Multiple Functions
+
+---
+#### Q71. Show the full name of each employee (e.g., "John Smith"), the year they were hired, and how many characters are in their full name, but only for those hired after 2019.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CONCAT(first_name, ' ', last_name) AS full_name, 
+        YEAR(hire_date) AS hire_year, 
+        LENGTH(CONCAT(first_name, ' ', last_name)) AS name_length 
+    FROM employees 
+    WHERE YEAR(hire_date) > 2019;
+```    
+</details>
+
+---
+#### Q72. Calculate the total payroll for employees whose `first_name` ends with the letter `h`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        SUM(salary) AS total_h_ending_salaries 
+    FROM employees 
+    WHERE first_name LIKE '%h';
+```    
+</details>
+
+---
+#### Q73. Find the average price of all products, but round it to the nearest integer, and also find the ceiling and floor of that average.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        ROUND(AVG(price)) AS avg_rounded, 
+        CEILING(AVG(price)) AS avg_ceil, 
+        FLOOR(AVG(price)) AS avg_floor 
+    FROM products;
+```    
+</details>
+
+
+---
+#### Q74. Show the `product_name` and the `stock_quantity` in a formatted string: "Product [name] has [qty] units." (use `CONCAT`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CONCAT('Product ', product_name, ' has ', stock_quantity, ' units.') AS stock_report 
+    FROM products;
+```    
+</details>
+
+---
+#### Q75. Count the number of customers who signed up in the year `2022`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT COUNT(*) AS signups_2022 
+    FROM customers 
+    WHERE YEAR(signup_date) = 2022;
+```    
+</details>
+
+
+---
+<br/><br/><br/><br/>
+
+#### Happy Practicing! 😊✨
+
+<br/><br/><br/><br/>
+---
+
