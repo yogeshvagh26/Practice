@@ -3581,11 +3581,11 @@ Since we're grouping and analyzing, the data stays unchanged. Run the reset scri
 ---
 #### Q32. Create a new column called `salary_grade` that labels employees as:
 
-* 'High' if salary >= 80000
+* `'High'` if salary >= 80000
 
-* 'Medium' if salary between 50000 and 79999
+* `'Medium'` if salary between 50000 and 79999
 
-* 'Low' if salary < 50000
+* `'Low'` if salary < 50000
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3603,13 +3603,13 @@ Since we're grouping and analyzing, the data stays unchanged. Run the reset scri
 </details>
 
 ---
-#### Q33. Using CASE, create a column `price_range` for products:
+#### Q33. Using `CASE`, create a column `price_range` for products:
 
-* 'Expensive' if price > 500
+* `'Expensive'` if price > 500
 
-* 'Moderate' if price between 50 and 500
+* `'Moderate'` if price between 50 and 500
 
-* 'Cheap' if price < 50
+* `'Cheap'` if price < 50
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3627,13 +3627,13 @@ Since we're grouping and analyzing, the data stays unchanged. Run the reset scri
 </details>
 
 ---
-#### Q34. Use CASE to categorize customers by the year they signed up:
+#### Q34. Use `CASE` to categorize customers by the year they signed up:
 
-* 'Old' if signup_date < '2021-01-01'
+* `'Old'` if signup_date < '2021-01-01'
 
-* 'Recent' if signup_date BETWEEN '2021-01-01' AND '2022-12-31'
+* `'Recent'` if signup_date BETWEEN '2021-01-01' AND '2022-12-31'
 
-* 'New' if signup_date > '2022-12-31'
+* `'New'` if signup_date > '2022-12-31'
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3651,15 +3651,15 @@ Since we're grouping and analyzing, the data stays unchanged. Run the reset scri
 </details>
 
 ---
-#### Q35. Use CASE to display department names in full form:
+#### Q35. Use `CASE` to display `department` names in full form:
 
-* 'Sales' → 'SALES TEAM'
+* `'Sales'` → `'SALES TEAM'`
 
-* 'IT' → 'TECHNOLOGY'
+* `'IT'` → `'TECHNOLOGY'`
 
-* 'HR' → 'HUMAN RESOURCES'
+* `'HR'` → `'HUMAN RESOURCES'`
 
-* 'Marketing' → 'MARKETING TEAM'
+* `'Marketing'` → `'MARKETING TEAM'`
 For others, keep as 'OTHER'.
 
 <details> <summary>Click to reveal answer</summary>
@@ -3681,7 +3681,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q36. Use CASE with an aggregate function: Count how many employees fall into each salary_grade (High, Medium, Low).
+#### Q36. Use `CASE` with an aggregate function: Count how many employees fall into each `salary_grade` (High, Medium, Low).
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3701,13 +3701,13 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q37. Use CASE to create a stock_status column:
+#### Q37. Use `CASE` to create a `stock_status` column:
 
-* 'Out of Stock' if stock_quantity = 0
+* `'Out of Stock'` if stock_quantity = 0
 
-* 'Low Stock' if stock_quantity BETWEEN 1 AND 10
+* `'Low Stock'` if stock_quantity BETWEEN 1 AND 10
 
-* 'In Stock' if stock_quantity > 10
+* `'In Stock'` if stock_quantity > 10
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3725,7 +3725,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q38. Categorize products by price and count how many in each category (Expensive, Moderate, Cheap).
+#### Q38. Categorize products by price and count how many in each category (`Expensive`, `Moderate`, `Cheap`).
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3744,7 +3744,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q39. Use CASE in ORDER BY to sort employees by a custom order: first IT, then Sales, then Marketing, then HR.
+#### Q39. Use `CASE` in `ORDER BY` to sort employees by a custom order: first `IT`, then `Sales`, then `Marketing`, then `HR`.
 > (Hint: assign a numeric value in CASE and sort by that.)
 
 <details> <summary>Click to reveal answer</summary>
@@ -3764,7 +3764,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q40. Use CASE to flag products that are both expensive (> 500) and in low stock (< 10). Create a column priority that says 'High Priority' if expensive AND low stock, 'Monitor' if either condition, else 'Normal'.
+#### Q40. Use `CASE` to flag products that are both expensive (> 500) and in low stock (< 10). Create a column `priority` that says `'High Priority'` if expensive AND low stock, `'Monitor'` if either condition, else `'Normal'`.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3787,7 +3787,7 @@ For others, keep as 'OTHER'.
 ### SECTION F: GROUP BY + CASE (Combining Grouping with Conditional Logic)
 
 ---
-#### Q41. Count the number of employees in each salary_grade (High, Medium, Low) per department.
+#### Q41. Count the number of employees in each `salary_grade` (High, Medium, Low) per department.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3807,7 +3807,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q42. For each product category, count how many products are In Stock vs Out of Stock (using stock_status CASE).
+#### Q42. For each product category, count how many products are `In Stock` vs `Out of Stock` (using stock_status CASE).
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3844,7 +3844,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q44. Using HAVING with CASE? That's tricky. Instead, find departments where the count of High salary employees is at least 2.
+#### Q44. Using `HAVING` with `CASE`? That's tricky. Instead, find departments where the count of `High` salary employees is at least 2.
 
 > (We'll use a subquery or a derived table. Since subqueries are not in the list, we'll do a simpler one.)
 
@@ -3864,7 +3864,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q45. For each department, calculate the average salary, but also show a CASE column that labels the department's average as 'Above Company Avg' or 'Below Company Avg'.
+#### Q45. For each department, calculate the average salary, but also show a `CASE` column that labels the department's average as '`Above Company Avg`' or `'Below Company Avg'`.
 
 > (First find company avg, then compare. Since we can't use subqueries in the list easily, we can hardcode the company average: (65000+72000+58000+85000+79000+67000+61000+55000+92000+48000)/10 = 68200)
 
@@ -3886,7 +3886,7 @@ For others, keep as 'OTHER'.
 ---
 ### SECTION G: Mixed Complex Queries (All Topics)
 ---
-#### Q46. Group products by category, calculate total stock and average price, but only show categories where total stock > 20 and average price > 50. Use aliases.
+#### Q46. Group products by `category`, calculate total stock and average price, but only show categories where total stock > 20 and average price > 50. Use aliases.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3919,11 +3919,11 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q48. Use CASE to create a region column for customers based on state:
+#### Q48. Use `CASE` to create a `region` column for customers based on state:
 
-* 'West' for CA, AZ
+* `'West'` for CA, AZ
 
-* 'Midwest' for IL, TX? Actually TX is South. Let's do: CA, AZ → West; IL, TX → Central; NY → East.
+* `'Midwest'` for IL, TX? Actually TX is South. Let's do: CA, AZ → West; IL, TX → Central; NY → East.
 
 **Count how many customers per region.**
 
@@ -3961,7 +3961,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q50. Use CASE to create a price_tier for products (0-50: 'Budget', 51-200: 'Mid', 201-500: 'High', 501+: 'Premium'). Then count products and average stock quantity per tier.
+#### Q50. Use `CASE` to create a `price_tier` for products (0-50: 'Budget', 51-200: 'Mid', 201-500: 'High', 501+: 'Premium'). Then count products and average stock quantity per tier.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -3981,7 +3981,7 @@ For others, keep as 'OTHER'.
 </details>
  
 ---
-#### Q51. For each year (using YEAR(hire_date)), count how many employees were hired in each department. Show only years where total hires (across all departments) is more than 2.
+#### Q51. For each year (using `YEAR(hire_date)`), count how many employees were hired in each department. Show only years where total hires (across all departments) is more than 2.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4016,7 +4016,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q52. Group customers by state and city, count them, and use CASE to label cities with count = 1 as 'Unique' and count > 1 as 'Multiple'.
+#### Q52. Group customers by `state` and `city`, count them, and use `CASE` to label cities with count = 1 as `'Unique'` and count > 1 as `'Multiple'`.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4035,7 +4035,7 @@ For others, keep as 'OTHER'.
 </details>
 
 --- 
-#### Q53. For each product category, calculate the total inventory value (price * stock_quantity), and use CASE to categorize the total value as 'High Value' (> 10000), 'Medium' (1000-10000), or 'Low' (< 1000).
+#### Q53. For each product category, calculate the total inventory value (`price * stock_quantity`), and use `CASE` to categorize the total value as `'High Value'` (> 10000), `'Medium'` (1000-10000), or `'Low'` (< 1000).
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4070,7 +4070,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q55. For each department, calculate the average salary, and then use CASE to label it as 'High Pay' if avg > 70000, 'Medium' if between 55000 and 70000, else 'Low'. Show only departments with 'High Pay'.
+#### Q55. For each department, calculate the average salary, and then use `CASE` to label it as `'High Pay'` if avg > 70000, `'Medium'` if between 55000 and 70000, else `'Low'`. Show only departments with 'High Pay'.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4111,7 +4111,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q57. For each employee, show their name, salary, and a CASE column bonus that gives 10% of salary if salary < 60000, 5% if between 60000 and 80000, and 0% if > 80000. Show the bonus amount.
+#### Q57. For each employee, show their name, salary, and a `CASE` column `bonus` that gives 10% of salary if salary < 60000, 5% if between 60000 and 80000, and 0% if > 80000. Show the bonus amount.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4131,7 +4131,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q58. Use GROUP BY with YEAR(signup_date) to count how many customers signed up each year, but only show years where the count is greater than 2.
+#### Q58. Use `GROUP BY` with `YEAR(signup_date)` to count how many customers signed up each year, but only show years where the count is greater than 2.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4147,7 +4147,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q59. For each category, show the minimum and maximum price, and use CASE to say 'All over 100' if the minimum price is > 100, 'All under 50' if max < 50, else 'Mixed'.
+#### Q59. For each category, show the minimum and maximum price, and use `CASE` to say '`All over 100`' if the minimum price is > 100, '`All under` 50' if max < 50, else `'Mixed'`.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4168,7 +4168,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q60. Use CASE in ORDER BY to sort products by category in a custom order: Electronics first, then Accessories, then Furniture, then Office, and within each category, sort by price descending.
+#### Q60. Use `CASE` in `ORDER BY` to sort products by category in a custom order: `Electronics` first, then `Accessories`, then `Furniture`, then `Office`, and within each category, sort by price descending.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4188,7 +4188,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q61. For each department, calculate the total salary and the number of employees. Then use CASE to label departments as 'Large' if they have >= 3 employees, else 'Small'. Show only 'Large' departments.
+#### Q61. For each department, calculate the total salary and the number of employees. Then use `CASE` to label departments as `'Large'` if they have >= 3 employees, else `'Small'`. Show only 'Large' departments.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4209,7 +4209,7 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q62. Group products by category and count how many have stock_quantity = 0 vs stock_quantity > 0 using CASE inside SUM (pivot-style).
+#### Q62. Group products by category and count how many have `stock_quantity = 0` vs `stock_quantity` > 0 using `CASE` inside `SUM` (pivot-style).
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4225,13 +4225,13 @@ For others, keep as 'OTHER'.
 
 
 ---
-#### Q63. Use CASE to label employees based on their hire_date decade:
+#### Q63. Use `CASE` to label employees based on their `hire_date` decade:
 
-* '2010s' if year between 2010-2019
+* `'2010s'` if year between 2010-2019
 
-* '2020s' if year between 2020-2029
+* `'2020s'` if year between 2020-2029
 
-* 'Other' otherwise
+* `'Other'` otherwise
 
 **Then count how many employees in each decade per department.**
 
@@ -4252,7 +4252,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q64. For each customer state, find the earliest and latest signup date. Use CASE to label the state as 'Active' if the latest signup is within the last 1 year (from today), else 'Inactive'.
+#### Q64. For each customer state, find the earliest and latest signup date. Use `CASE` to label the state as `'Active'` if the latest signup is within the last 1 year (from today), else `'Inactive'`.
 
 <details> <summary>Click to reveal answer</summary>
 
@@ -4271,7 +4271,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q65. Use GROUP BY with HAVING to find departments where the total number of employees is greater than the average department size (overall average employees per department).
+#### Q65. Use `GROUP BY` with `HAVING` to find departments where the total number of employees is greater than the average department size (overall average employees per department).
 
 > (First get average department size: total employees / number of distinct departments = 10/4 = 2.5. So we need departments with count > 2.5, i.e., count >= 3.)
 
@@ -4303,7 +4303,7 @@ For others, keep as 'OTHER'.
 </details>
 
 ---
-#### Q66. Use CASE to create a season column for customers based on their signup month:
+#### Q66. Use `CASE` to create a `season` column for customers based on their signup month:
 
 * Winter: 12, 1, 2
 
