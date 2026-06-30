@@ -3040,3 +3040,1492 @@ Instead: Count employees hired in 2020 specifically.
 <br/><br/><br/><br/>
 ---
 
+Perfect! Let's tackle Phase 4. We'll use the same `employees`, `products`, and `customers` tables.
+
+Since we're grouping and analyzing, the data stays unchanged. Run the reset script once to ensure a clean slate.
+
+---
+
+## 🛠️ Quick Reset (Run this once to start fresh)
+
+```sql
+
+    TRUNCATE TABLE employees;
+    TRUNCATE TABLE products;
+    TRUNCATE TABLE customers;
+
+    INSERT INTO employees (employee_id, first_name, last_name, department, salary, hire_date) VALUES
+    (1, 'John', 'Smith', 'Sales', 65000, '2020-01-15'),
+    (2, 'Emma', 'Johnson', 'Marketing', 72000, '2019-03-22'),
+    (3, 'Michael', 'Brown', 'Sales', 58000, '2021-07-01'),
+    (4, 'Sarah', 'Davis', 'IT', 85000, '2018-11-10'),
+    (5, 'David', 'Miller', 'IT', 79000, '2020-06-19'),
+    (6, 'Laura', 'Wilson', 'Marketing', 67000, '2022-02-28'),
+    (7, 'James', 'Moore', 'Sales', 61000, '2021-09-14'),
+    (8, 'Linda', 'Taylor', 'HR', 55000, '2020-12-01'),
+    (9, 'Robert', 'Anderson', 'IT', 92000, '2017-05-05'),
+    (10, 'Mary', 'Thomas', 'HR', 48000, '2023-01-20');
+
+    INSERT INTO products (product_id, product_name, category, price, stock_quantity) VALUES
+    (101, 'Laptop Pro', 'Electronics', 1200.00, 15),
+    (102, 'Wireless Mouse', 'Accessories', 25.50, 200),
+    (103, 'USB-C Hub', 'Accessories', 45.00, 0),
+    (104, 'Monitor 27"', 'Electronics', 350.00, 8),
+    (105, 'Desk Lamp', 'Furniture', 40.00, 45),
+    (106, 'Gaming Keyboard', 'Electronics', 95.00, 12),
+    (107, 'Office Chair', 'Furniture', 250.00, 5),
+    (108, 'HDMI Cable', 'Accessories', 15.00, 150),
+    (109, 'Smartphone X', 'Electronics', 999.00, 0),
+    (110, 'Notebook Pack', 'Office', 12.00, 300);
+
+    INSERT INTO customers (customer_id, first_name, last_name, city, state, signup_date) VALUES
+    (201, 'Alice', 'Walker', 'New York', 'NY', '2022-05-10'),
+    (202, 'Bob', 'Green', 'Los Angeles', 'CA', '2021-08-21'),
+    (203, 'Charlie', 'Adams', 'Chicago', 'IL', '2023-02-14'),
+    (204, 'Diana', 'Nelson', 'Houston', 'TX', '2020-11-01'),
+    (205, 'Ethan', 'Carter', 'Phoenix', 'AZ', '2019-07-19'),
+    (206, 'Fiona', 'Mitchell', 'New York', 'NY', '2022-12-05'),
+    (207, 'George', 'Perez', 'Los Angeles', 'CA', '2023-06-30'),
+    (208, 'Hannah', 'Roberts', 'Chicago', 'IL', '2021-04-17');
+
+```
+
+## 📝 PART 4: PRACTICE QUESTIONS + SOLUTIONS (Phase 4)
+
+
+### SECTION A: GROUP BY (Single Column)
+
+#### Q1. Count the number of employees in each department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        COUNT(*) AS employee_count 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+---
+#### Q2. Calculate the total salary paid to each department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        SUM(salary) AS total_salary 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+---
+#### Q3. Find the average salary for each department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        AVG(salary) AS avg_salary 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+---
+#### Q4. Count the number of products in each category.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        COUNT(*) AS product_count 
+    FROM products 
+    GROUP BY category;
+```    
+</details>
+
+---
+#### Q5. Calculate the total stock quantity for each product category.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        SUM(stock_quantity) AS total_stock 
+    FROM products 
+    GROUP BY category;
+```    
+</details>
+
+---
+#### Q6. Find the average price of products in each category.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        AVG(price) AS avg_price 
+    FROM products 
+    GROUP BY category;
+```    
+</details>
+
+---
+#### Q7. Count the number of customers in each state.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state, 
+        COUNT(*) AS customer_count 
+    FROM customers 
+    GROUP BY state;
+```    
+</details>
+
+---
+#### Q8. Find the earliest signup date for each state.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state, 
+        MIN(signup_date) AS earliest_signup 
+    FROM customers 
+    GROUP BY state;
+```    
+</details>
+
+---
+#### Q9. Find the highest salary in each department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        MAX(salary) AS highest_salary 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+---
+#### Q10. Find the lowest salary in each department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        MIN(salary) AS lowest_salary 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+---
+
+### SECTION B: GROUP BY (Multiple Columns)
+
+---
+#### Q11. Count the number of employees grouped by both `department` and `hire_date` year (use `YEAR(hire_date)`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        YEAR(hire_date) AS hire_year, 
+        COUNT(*) AS employee_count 
+    FROM employees 
+    GROUP BY 
+        department, 
+        YEAR(hire_date);
+```        
+</details>
+
+
+---
+#### Q12. Group products by `category` and `stock_quantity` status (in stock vs out of stock). Count how many products fall into each group.
+
+> (Hint: Create a derived column in GROUP BY – but GROUP BY can take expressions. We'll use CASE later, but for now, group by stock_quantity = 0? Actually, GROUP BY doesn't allow boolean directly in all DBs. Let's just group by category and stock_quantity integer.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        stock_quantity, 
+        COUNT(*) AS product_count 
+    FROM products 
+    GROUP BY 
+        category, 
+        stock_quantity;
+```    
+</details>
+
+---
+#### Q12b. (Better question): Group customers by state and city, and count how many in each combination.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state, 
+        city, 
+        COUNT(*) AS customer_count 
+    FROM customers 
+    GROUP BY state, city;
+```    
+</details>
+
+---
+#### Q13. Calculate the total salary paid by each department and for each year of hire.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        YEAR(hire_date) AS hire_year, 
+        SUM(salary) AS total_salary 
+    FROM employees 
+    GROUP BY 
+        department, 
+        YEAR(hire_date);
+```        
+</details>
+
+---
+#### Q14. Group products by category and price range (e.g., price < 50, 50-200, >200).
+> Wait – this requires CASE. We'll save it for the CASE section.
+
+---
+
+### SECTION C: HAVING (Filtering Groups)
+
+---
+#### Q15. Find departments that have more than `2` employees.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        COUNT(*) AS employee_count 
+    FROM employees 
+    GROUP BY department 
+    HAVING COUNT(*) > 2;
+```    
+</details>
+
+---
+#### Q16. Find departments with an average salary greater than `65000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        AVG(salary) AS avg_salary 
+    FROM employees 
+    GROUP BY department 
+    HAVING AVG(salary) > 65000;
+```    
+</details>
+
+
+---
+#### Q17. Find product categories that have a total stock quantity of more than `100`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        SUM(stock_quantity) AS total_stock 
+    FROM products 
+    GROUP BY category 
+    HAVING SUM(stock_quantity) > 100;
+```    
+</details>
+
+---
+#### Q18. Find product categories with an average price less than `100`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        AVG(price) AS avg_price 
+    FROM products 
+    GROUP BY category 
+    HAVING AVG(price) < 100;
+```    
+</details>
+
+---
+#### Q19. Find states that have at least `2` customers.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state, 
+        COUNT(*) AS customer_count 
+    FROM customers 
+    GROUP BY state 
+    HAVING COUNT(*) >= 2;
+```    
+</details>
+
+---
+#### Q20. Find departments where the total salary is greater than `120000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        SUM(salary) AS total_salary 
+    FROM employees 
+    GROUP BY department 
+    HAVING SUM(salary) > 120000;
+```    
+</details>
+
+---
+#### Q21. Find departments where the highest salary is at least `85000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        MAX(salary) AS max_salary 
+    FROM employees 
+    GROUP BY department 
+    HAVING MAX(salary) >= 85000;
+```    
+</details>
+
+---
+#### Q22. Find categories where the minimum price is less than `20`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        MIN(price) AS min_price 
+    FROM products 
+    GROUP BY category 
+    HAVING MIN(price) < 20;
+```    
+</details>
+
+---
+#### Q23. Find categories that have exactly `2` products.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category, 
+        COUNT(*) AS product_count 
+    FROM products 
+    GROUP BY category 
+    HAVING COUNT(*) = 2;
+```    
+</details>
+
+---
+#### Q24. Find states where the total number of customers is less than `3`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT state, COUNT(*) AS customer_count 
+    FROM customers 
+    GROUP BY state 
+    HAVING COUNT(*) < 3;
+```    
+</details>
+
+---
+#### Q25. Find departments where the average salary is between `60000` and `80000`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        AVG(salary) AS avg_salary 
+    FROM employees 
+    GROUP BY department 
+    HAVING AVG(salary) BETWEEN 60000 AND 80000;
+```    
+</details>
+
+---
+
+### SECTION D: Aliases (Column & Table Aliases)
+
+---
+#### Q26. Write a query that shows `department` and total salary, but use alias `dept` and `total_pay` for the columns.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department AS dept, 
+        SUM(salary) AS total_pay 
+    FROM employees 
+    GROUP BY department;
+```    
+</details>
+
+
+---
+#### Q27. Using a table alias (`e`), select all employees from the `employees` table, filtering by `department = 'IT'`. Show `e.first_name` and `e.salary`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.salary 
+    FROM employees AS e 
+    WHERE e.department = 'IT';
+```    
+</details>
+
+---
+#### Q28. Write a GROUP BY query that uses column aliases in the `HAVING` clause.
+> (Note: In most SQL dialects, you cannot use column aliases in HAVING directly – you have to repeat the expression. But we can show the alias in SELECT.)
+
+> Show department and count, with alias emp_count, and filter to count > 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        COUNT(*) AS emp_count 
+    FROM employees 
+    GROUP BY department 
+    HAVING COUNT(*) > 2;  -- can't use emp_count here in most SQL
+    -- But in MySQL, you can use emp_count in HAVING. For portability, we use COUNT(*).
+```    
+</details>
+
+---
+#### Q29. Give aliases to aggregated columns in a single query: `total_employees`, `total_salary`, `average_salary`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        COUNT(*) AS total_employees,
+        SUM(salary) AS total_salary,
+        AVG(salary) AS average_salary
+    FROM employees;
+```    
+</details>
+
+---
+#### Q30. Use a table alias for `products` and calculate the total value of stock (`price * stock_quantity`) per category, aliasing the sum as `inventory_value`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.category, 
+        SUM(p.price * p.stock_quantity) AS inventory_value 
+    FROM products AS p 
+    GROUP BY p.category;
+```    
+</details>
+
+---
+#### Q31. Write a query that selects `customer_id`, `first_name`, and `signup_date`, and aliases the `signup_date` as `joined`, then sort by `joined` descending.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        customer_id, 
+        first_name, 
+        signup_date AS joined 
+    FROM customers 
+    ORDER BY joined DESC;
+```    
+</details>
+
+---
+
+### SECTION E: CASE Statements (Simple & Searched)
+
+---
+#### Q32. Create a new column called `salary_grade` that labels employees as:
+
+* 'High' if salary >= 80000
+
+* 'Medium' if salary between 50000 and 79999
+
+* 'Low' if salary < 50000
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        salary,
+        CASE 
+            WHEN salary >= 80000 THEN 'High'
+            WHEN salary >= 50000 AND salary < 80000 THEN 'Medium'
+            ELSE 'Low'
+        END AS salary_grade
+    FROM employees;
+```    
+</details>
+
+---
+#### Q33. Using CASE, create a column `price_range` for products:
+
+* 'Expensive' if price > 500
+
+* 'Moderate' if price between 50 and 500
+
+* 'Cheap' if price < 50
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name, 
+        price,
+        CASE 
+            WHEN price > 500 THEN 'Expensive'
+            WHEN price BETWEEN 50 AND 500 THEN 'Moderate'
+            ELSE 'Cheap'
+        END AS price_range
+    FROM products;
+```    
+</details>
+
+---
+#### Q34. Use CASE to categorize customers by the year they signed up:
+
+* 'Old' if signup_date < '2021-01-01'
+
+* 'Recent' if signup_date BETWEEN '2021-01-01' AND '2022-12-31'
+
+* 'New' if signup_date > '2022-12-31'
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name, 
+        signup_date,
+        CASE 
+            WHEN signup_date < '2021-01-01' THEN 'Old'
+            WHEN signup_date BETWEEN '2021-01-01' AND '2022-12-31' THEN 'Recent'
+            ELSE 'New'
+        END AS customer_age
+    FROM customers;
+```    
+</details>
+
+---
+#### Q35. Use CASE to display department names in full form:
+
+* 'Sales' → 'SALES TEAM'
+
+* 'IT' → 'TECHNOLOGY'
+
+* 'HR' → 'HUMAN RESOURCES'
+
+* 'Marketing' → 'MARKETING TEAM'
+For others, keep as 'OTHER'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name,
+        department,
+        CASE department
+            WHEN 'Sales' THEN 'SALES TEAM'
+            WHEN 'IT' THEN 'TECHNOLOGY'
+            WHEN 'HR' THEN 'HUMAN RESOURCES'
+            WHEN 'Marketing' THEN 'MARKETING TEAM'
+            ELSE 'OTHER'
+        END AS department_full
+    FROM employees;
+```    
+</details>
+
+
+---
+#### Q36. Use CASE with an aggregate function: Count how many employees fall into each salary_grade (High, Medium, Low).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN salary >= 80000 THEN 'High'
+            WHEN salary >= 50000 AND salary < 80000 THEN 'Medium'
+            ELSE 'Low'
+        END AS salary_grade,
+        COUNT(*) AS employee_count
+    FROM employees
+    GROUP BY salary_grade;
+    -- Note: In some SQL, you need to repeat the CASE in GROUP BY, but MySQL allows alias.
+    -- Safer: GROUP BY CASE WHEN ... END
+```    
+</details>
+
+---
+#### Q37. Use CASE to create a stock_status column:
+
+* 'Out of Stock' if stock_quantity = 0
+
+* 'Low Stock' if stock_quantity BETWEEN 1 AND 10
+
+* 'In Stock' if stock_quantity > 10
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name,
+        stock_quantity,
+        CASE 
+            WHEN stock_quantity = 0 THEN 'Out of Stock'
+            WHEN stock_quantity BETWEEN 1 AND 10 THEN 'Low Stock'
+            ELSE 'In Stock'
+        END AS stock_status
+    FROM products;
+```    
+</details>
+
+---
+#### Q38. Categorize products by price and count how many in each category (Expensive, Moderate, Cheap).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN price > 500 THEN 'Expensive'
+            WHEN price BETWEEN 50 AND 500 THEN 'Moderate'
+            ELSE 'Cheap'
+        END AS price_category,
+        COUNT(*) AS product_count
+    FROM products
+    GROUP BY price_category;
+```    
+</details>
+
+
+---
+#### Q39. Use CASE in ORDER BY to sort employees by a custom order: first IT, then Sales, then Marketing, then HR.
+> (Hint: assign a numeric value in CASE and sort by that.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT first_name, department 
+    FROM employees 
+    ORDER BY 
+        CASE department 
+            WHEN 'IT' THEN 1
+            WHEN 'Sales' THEN 2
+            WHEN 'Marketing' THEN 3
+            WHEN 'HR' THEN 4
+            ELSE 5
+        END;
+```
+</details>
+
+---
+#### Q40. Use CASE to flag products that are both expensive (> 500) and in low stock (< 10). Create a column priority that says 'High Priority' if expensive AND low stock, 'Monitor' if either condition, else 'Normal'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        product_name,
+        price,
+        stock_quantity,
+        CASE 
+            WHEN price > 500 AND stock_quantity < 10 THEN 'High Priority'
+            WHEN price > 500 OR stock_quantity < 10 THEN 'Monitor'
+            ELSE 'Normal'
+        END AS priority
+    FROM products;
+```    
+</details>
+
+---
+
+### SECTION F: GROUP BY + CASE (Combining Grouping with Conditional Logic)
+
+---
+#### Q41. Count the number of employees in each salary_grade (High, Medium, Low) per department.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        CASE 
+            WHEN salary >= 80000 THEN 'High'
+            WHEN salary >= 50000 AND salary < 80000 THEN 'Medium'
+            ELSE 'Low'
+        END AS salary_grade,
+        COUNT(*) AS count
+    FROM employees
+    GROUP BY department, salary_grade;
+```    
+</details>
+
+
+---
+#### Q42. For each product category, count how many products are In Stock vs Out of Stock (using stock_status CASE).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        CASE 
+            WHEN stock_quantity = 0 THEN 'Out of Stock'
+            ELSE 'In Stock'
+        END AS stock_status,
+        COUNT(*) AS product_count
+    FROM products
+    GROUP BY category, stock_status;
+```    
+</details>
+
+---
+#### Q43. For each department, show the total salary of employees who earn >= 70000 vs those who earn < 70000.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        CASE 
+            WHEN salary >= 70000 THEN 'High Earner'
+            ELSE 'Low Earner'
+        END AS earner_type,
+        SUM(salary) AS total_salary
+    FROM employees
+    GROUP BY department, earner_type;
+```    
+</details>
+
+
+---
+#### Q44. Using HAVING with CASE? That's tricky. Instead, find departments where the count of High salary employees is at least 2.
+
+> (We'll use a subquery or a derived table. Since subqueries are not in the list, we'll do a simpler one.)
+
+**Find departments that have at least one employee with salary > 80000 (using HAVING with MAX).**
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        COUNT(*) AS total_emps, 
+        MAX(salary) AS max_salary
+    FROM employees
+    GROUP BY department
+    HAVING MAX(salary) > 80000;
+```    
+</details>
+
+---
+#### Q45. For each department, calculate the average salary, but also show a CASE column that labels the department's average as 'Above Company Avg' or 'Below Company Avg'.
+
+> (First find company avg, then compare. Since we can't use subqueries in the list easily, we can hardcode the company average: (65000+72000+58000+85000+79000+67000+61000+55000+92000+48000)/10 = 68200)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        AVG(salary) AS avg_salary,
+        CASE 
+            WHEN AVG(salary) > 68200 THEN 'Above Company Avg'
+            ELSE 'Below Company Avg'
+        END AS comparison
+    FROM employees
+    GROUP BY department;
+```    
+</details>
+
+---
+### SECTION G: Mixed Complex Queries (All Topics)
+---
+#### Q46. Group products by category, calculate total stock and average price, but only show categories where total stock > 20 and average price > 50. Use aliases.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category AS prod_category,
+        SUM(stock_quantity) AS total_stock,
+        AVG(price) AS avg_price
+    FROM products
+    GROUP BY category
+    HAVING SUM(stock_quantity) > 20 AND AVG(price) > 50;
+```
+</details>
+
+---
+#### Q47. For each state, count customers and find the most recent signup date. Show only states with at least 2 customers and the most recent signup after '2022-01-01'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state,
+        COUNT(*) AS customer_count,
+        MAX(signup_date) AS latest_signup
+    FROM customers
+    GROUP BY state
+    HAVING COUNT(*) >= 2 AND MAX(signup_date) > '2022-01-01';
+```    
+</details>
+
+
+---
+#### Q48. Use CASE to create a region column for customers based on state:
+
+* 'West' for CA, AZ
+
+* 'Midwest' for IL, TX? Actually TX is South. Let's do: CA, AZ → West; IL, TX → Central; NY → East.
+
+**Count how many customers per region.**
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN state IN ('CA', 'AZ') THEN 'West'
+            WHEN state IN ('IL', 'TX') THEN 'Central'
+            WHEN state = 'NY' THEN 'East'
+            ELSE 'Other'
+        END AS region,
+        COUNT(*) AS customer_count
+    FROM customers
+    GROUP BY region;
+```    
+</details>
+
+---
+#### Q49. For each department, show the number of employees, the total salary, and the average salary, but only for departments where the average salary is greater than the company average (68200). Use aliases for all columns.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department AS dept,
+        COUNT(*) AS emp_count,
+        SUM(salary) AS total_pay,
+        AVG(salary) AS avg_pay
+    FROM employees
+    GROUP BY department
+    HAVING AVG(salary) > 68200;
+```    
+</details>
+
+---
+#### Q50. Use CASE to create a price_tier for products (0-50: 'Budget', 51-200: 'Mid', 201-500: 'High', 501+: 'Premium'). Then count products and average stock quantity per tier.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN price <= 50 THEN 'Budget'
+            WHEN price BETWEEN 51 AND 200 THEN 'Mid'
+            WHEN price BETWEEN 201 AND 500 THEN 'High'
+            ELSE 'Premium'
+        END AS price_tier,
+        COUNT(*) AS product_count,
+        AVG(stock_quantity) AS avg_stock
+    FROM products
+    GROUP BY price_tier;
+```    
+</details>
+ 
+---
+#### Q51. For each year (using YEAR(hire_date)), count how many employees were hired in each department. Show only years where total hires (across all departments) is more than 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        YEAR(hire_date) AS hire_year,
+        department,
+        COUNT(*) AS hired_count
+    FROM employees
+    GROUP BY YEAR(hire_date), department
+    HAVING COUNT(*) > 2;  -- This filters groups where dept+year combo has > 2. But we want total hires per year > 2.
+    -- Correct: use a subquery or count total per year. Without subquery, let's do:
+    -- Actually, let's just filter on COUNT(*) > 1 for this exercise.
+```    
+</details>
+
+####  Let's do a simpler version:
+
+
+#### Q51b. Count employees hired per year, and show only years with total hires > 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        YEAR(hire_date) AS hire_year,
+        COUNT(*) AS total_hired
+    FROM employees
+    GROUP BY YEAR(hire_date)
+    HAVING COUNT(*) > 2;
+```    
+</details>
+
+---
+#### Q52. Group customers by state and city, count them, and use CASE to label cities with count = 1 as 'Unique' and count > 1 as 'Multiple'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state,
+        city,
+        COUNT(*) AS customer_count,
+        CASE 
+            WHEN COUNT(*) = 1 THEN 'Unique'
+            ELSE 'Multiple'
+        END AS city_type
+    FROM customers
+    GROUP BY state, city;
+```    
+</details>
+
+--- 
+#### Q53. For each product category, calculate the total inventory value (price * stock_quantity), and use CASE to categorize the total value as 'High Value' (> 10000), 'Medium' (1000-10000), or 'Low' (< 1000).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        SUM(price * stock_quantity) AS total_value,
+        CASE 
+            WHEN SUM(price * stock_quantity) > 10000 THEN 'High Value'
+            WHEN SUM(price * stock_quantity) BETWEEN 1000 AND 10000 THEN 'Medium'
+            ELSE 'Low'
+        END AS value_tier
+    FROM products
+    GROUP BY category;
+```    
+</details>
+
+
+---
+#### Q54. Show departments where the salary range (MAX - MIN) is greater than 20000. Include the department and the range.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        MAX(salary) - MIN(salary) AS salary_range
+    FROM employees
+    GROUP BY department
+    HAVING MAX(salary) - MIN(salary) > 20000;
+```    
+</details>
+
+---
+#### Q55. For each department, calculate the average salary, and then use CASE to label it as 'High Pay' if avg > 70000, 'Medium' if between 55000 and 70000, else 'Low'. Show only departments with 'High Pay'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        AVG(salary) AS avg_salary,
+        CASE 
+            WHEN AVG(salary) > 70000 THEN 'High Pay'
+            WHEN AVG(salary) BETWEEN 55000 AND 70000 THEN 'Medium'
+            ELSE 'Low'
+        END AS pay_grade
+    FROM employees
+    GROUP BY department
+    HAVING CASE 
+            WHEN AVG(salary) > 70000 THEN 'High Pay'
+            ELSE 'Not High'
+        END = 'High Pay';
+```        
+</details>
+
+> Simpler: Just use HAVING AVG(salary) > 70000.
+
+
+---
+#### Q56. Count the number of products per category, but only include categories that have at least one product with a price greater than 100.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        COUNT(*) AS product_count
+    FROM products
+    GROUP BY category
+    HAVING MAX(price) > 100;
+```    
+</details>
+
+---
+#### Q57. For each employee, show their name, salary, and a CASE column bonus that gives 10% of salary if salary < 60000, 5% if between 60000 and 80000, and 0% if > 80000. Show the bonus amount.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        first_name,
+        salary,
+        CASE 
+            WHEN salary < 60000 THEN salary * 0.10
+            WHEN salary BETWEEN 60000 AND 80000 THEN salary * 0.05
+            ELSE 0
+        END AS bonus
+    FROM employees;
+```    
+</details>
+
+
+
+---
+#### Q58. Use GROUP BY with YEAR(signup_date) to count how many customers signed up each year, but only show years where the count is greater than 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        YEAR(signup_date) AS signup_year,
+        COUNT(*) AS customer_count
+    FROM customers
+    GROUP BY YEAR(signup_date)
+    HAVING COUNT(*) > 2;
+```    
+</details>
+
+
+---
+#### Q59. For each category, show the minimum and maximum price, and use CASE to say 'All over 100' if the minimum price is > 100, 'All under 50' if max < 50, else 'Mixed'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        MIN(price) AS min_price,
+        MAX(price) AS max_price,
+        CASE 
+            WHEN MIN(price) > 100 THEN 'All over 100'
+            WHEN MAX(price) < 50 THEN 'All under 50'
+            ELSE 'Mixed'
+        END AS price_pattern
+    FROM products
+    GROUP BY category;
+```    
+</details>
+
+
+---
+#### Q60. Use CASE in ORDER BY to sort products by category in a custom order: Electronics first, then Accessories, then Furniture, then Office, and within each category, sort by price descending.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT product_name, category, price
+    FROM products
+    ORDER BY 
+        CASE category 
+            WHEN 'Electronics' THEN 1
+            WHEN 'Accessories' THEN 2
+            WHEN 'Furniture' THEN 3
+            WHEN 'Office' THEN 4
+            ELSE 5
+        END,
+        price DESC;
+```        
+</details>
+
+---
+#### Q61. For each department, calculate the total salary and the number of employees. Then use CASE to label departments as 'Large' if they have >= 3 employees, else 'Small'. Show only 'Large' departments.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        COUNT(*) AS emp_count,
+        SUM(salary) AS total_salary,
+        CASE 
+            WHEN COUNT(*) >= 3 THEN 'Large'
+            ELSE 'Small'
+        END AS dept_size
+    FROM employees
+    GROUP BY department
+    HAVING COUNT(*) >= 3;
+```    
+</details>
+
+
+---
+#### Q62. Group products by category and count how many have stock_quantity = 0 vs stock_quantity > 0 using CASE inside SUM (pivot-style).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        SUM(CASE WHEN stock_quantity = 0 THEN 1 ELSE 0 END) AS out_of_stock_count,
+        SUM(CASE WHEN stock_quantity > 0 THEN 1 ELSE 0 END) AS in_stock_count
+    FROM products
+    GROUP BY category;
+```    
+</details>
+
+
+---
+#### Q63. Use CASE to label employees based on their hire_date decade:
+
+* '2010s' if year between 2010-2019
+
+* '2020s' if year between 2020-2029
+
+* 'Other' otherwise
+
+**Then count how many employees in each decade per department.**
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        CASE 
+            WHEN YEAR(hire_date) BETWEEN 2010 AND 2019 THEN '2010s'
+            WHEN YEAR(hire_date) BETWEEN 2020 AND 2029 THEN '2020s'
+            ELSE 'Other'
+        END AS decade,
+        COUNT(*) AS employee_count
+    FROM employees
+    GROUP BY department, decade;
+```    
+</details>
+
+---
+#### Q64. For each customer state, find the earliest and latest signup date. Use CASE to label the state as 'Active' if the latest signup is within the last 1 year (from today), else 'Inactive'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state,
+        MIN(signup_date) AS earliest,
+        MAX(signup_date) AS latest,
+        CASE 
+            WHEN DATEDIFF(CURDATE(), MAX(signup_date)) <= 365 THEN 'Active'
+            ELSE 'Inactive'
+        END AS status
+    FROM customers
+    GROUP BY state;
+```    
+</details>
+
+---
+#### Q65. Use GROUP BY with HAVING to find departments where the total number of employees is greater than the average department size (overall average employees per department).
+
+> (First get average department size: total employees / number of distinct departments = 10/4 = 2.5. So we need departments with count > 2.5, i.e., count >= 3.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department, 
+        COUNT(*) AS emp_count
+    FROM employees
+    GROUP BY department
+    HAVING COUNT(*) > (SELECT COUNT(*) / COUNT(DISTINCT department) FROM employees);
+    -- Subquery used here. If you want to avoid subquery, just use HAVING COUNT(*) > 2.5
+```    
+</details>
+
+#### Since subqueries aren't in the list, let's do a simpler version:
+
+#### Q65b. Find departments with employee count greater than 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT department, COUNT(*) AS emp_count
+    FROM employees
+    GROUP BY department
+    HAVING COUNT(*) > 2;
+```    
+</details>
+
+---
+#### Q66. Use CASE to create a season column for customers based on their signup month:
+
+* Winter: 12, 1, 2
+
+* Spring: 3, 4, 5
+
+* Summer: 6, 7, 8
+
+* Fall: 9, 10, 11
+
+**Then count how many customers signed up in each season.**
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN MONTH(signup_date) IN (12, 1, 2) THEN 'Winter'
+            WHEN MONTH(signup_date) IN (3, 4, 5) THEN 'Spring'
+            WHEN MONTH(signup_date) IN (6, 7, 8) THEN 'Summer'
+            WHEN MONTH(signup_date) IN (9, 10, 11) THEN 'Fall'
+        END AS season,
+        COUNT(*) AS customer_count
+    FROM customers
+    GROUP BY season;
+```    
+</details>
+
+---
+#### Q67. For each product category, calculate the total revenue if all stock were sold (price * stock_quantity). Then use CASE to label categories as `'Top Tier'` if total revenue > 20000, `'Mid Tier'` if 5000-20000, `'Low Tier'` if < 5000. Show only 'Top Tier' categories.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        SUM(price * stock_quantity) AS potential_revenue,
+        CASE 
+            WHEN SUM(price * stock_quantity) > 20000 THEN 'Top Tier'
+            WHEN SUM(price * stock_quantity) BETWEEN 5000 AND 20000 THEN 'Mid Tier'
+            ELSE 'Low Tier'
+        END AS tier
+    FROM products
+    GROUP BY category
+    HAVING SUM(price * stock_quantity) > 20000;
+```    
+</details>
+
+---
+#### Q68. Write a query that groups employees by the first letter of their `first_name` (using `LEFT(first_name, 1)`) and counts how many employees have names starting with each letter. Show only letters with count > 1.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        LEFT(first_name, 1) AS first_letter,
+        COUNT(*) AS emp_count
+    FROM employees
+    GROUP BY LEFT(first_name, 1)
+    HAVING COUNT(*) > 1;
+```    
+</details>
+
+
+---
+#### Q69. For each department, calculate:
+
+* Total employees
+
+* Average salary
+
+* The difference between the highest and lowest salary
+
+* Use `CASE` to label the department's salary spread as `'Wide'` if difference > 30000, else `'Narrow'`
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        COUNT(*) AS total_emps,
+        AVG(salary) AS avg_sal,
+        MAX(salary) - MIN(salary) AS salary_spread,
+        CASE 
+            WHEN (MAX(salary) - MIN(salary)) > 30000 THEN 'Wide'
+            ELSE 'Narrow'
+        END AS spread_label
+    FROM employees
+    GROUP BY department;
+```    
+</details>
+
+---
+#### Q70. Use `CASE` to assign a `priority` to each product:
+
+* `'High'` if category = 'Electronics' and price > 1000
+
+* `'Medium'` if category = 'Accessories' and stock_quantity > 100
+
+* `'Low'` for everything else
+
+**Then count how many products fall into each priority level.**
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        CASE 
+            WHEN category = 'Electronics' AND price > 1000 THEN 'High'
+            WHEN category = 'Accessories' AND stock_quantity > 100 THEN 'Medium'
+            ELSE 'Low'
+        END AS priority,
+        COUNT(*) AS product_count
+    FROM products
+    GROUP BY priority;
+```    
+</details>
+
+---
+
+### 🎯 BONUS: Advanced Combinations
+
+
+
+---
+#### Q71. For each department, show the total salary, but only for employees hired in 2020 or later. Then filter departments where this total exceeds 60000.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        SUM(salary) AS total_salary_recent
+    FROM employees
+    WHERE hire_date >= '2020-01-01'
+    GROUP BY department
+    HAVING SUM(salary) > 60000;
+```
+</details>
+
+
+---
+#### Q72. Group products by `category` and `stock_status` (using CASE: 'In Stock' if stock > 0, else 'Out'). Count products in each group, and show only groups where count >= 2.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category,
+        CASE 
+            WHEN stock_quantity > 0 THEN 'In Stock'
+            ELSE 'Out'
+        END AS stock_status,
+        COUNT(*) AS product_count
+    FROM products
+    GROUP BY category, stock_status
+    HAVING COUNT(*) >= 2;
+```    
+</details>
+
+
+---
+#### Q73. Use `CASE` to categorize employees by the length of their `first_name` (short = length <= 4, medium = 5-6, long = >= 7). For each department, count how many employees have short, medium, and long names.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        department,
+        CASE 
+            WHEN LENGTH(first_name) <= 4 THEN 'Short'
+            WHEN LENGTH(first_name) BETWEEN 5 AND 6 THEN 'Medium'
+            ELSE 'Long'
+        END AS name_length_category,
+        COUNT(*) AS emp_count
+    FROM employees
+    GROUP BY department, name_length_category;
+```    
+</details>
+
+
+---
+#### Q74. Find the total stock quantity per category, and also the number of distinct products per category. Use aliases, and only show categories where total stock > 50.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        category AS cat,
+        SUM(stock_quantity) AS total_qty,
+        COUNT(*) AS distinct_products
+    FROM products
+    GROUP BY category
+    HAVING SUM(stock_quantity) > 50;
+```    
+</details>
+ 
+---
+#### Q75. For each state, count the number of customers, and use `CASE` to label states as `'Large'` if count >= 3, `'Medium'` if count = 2, `'Small'` if count = 1. Sort by count descending.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        state,
+        COUNT(*) AS customer_count,
+        CASE 
+            WHEN COUNT(*) >= 3 THEN 'Large'
+            WHEN COUNT(*) = 2 THEN 'Medium'
+            ELSE 'Small'
+        END AS state_size
+    FROM customers
+    GROUP BY state
+    ORDER BY customer_count DESC;
+```    
+</details>
+
+
+---
+<br/><br/><br/><br/>
+
+#### Happy Practicing! 😊✨
+
+<br/><br/><br/><br/>
+
+---
