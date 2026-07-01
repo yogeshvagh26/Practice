@@ -4529,3 +4529,1641 @@ For others, keep as 'OTHER'.
 <br/><br/><br/><br/>
 
 ---
+
+Let's dive into **Phase 5: Joins**! We'll expand our database with new tables that have relationships so we can practice all types of joins. I'll provide a complete setup script, then **75+ practice questions** (yes, 75!) with **solutions**.
+
+## 🛠️ SETUP: Create New Tables & Sample Data
+
+Run this script to add the necessary tables and populate them. (It will not affect your existing `employees`, `products`, `customers` tables – we'll keep them for reference, but joins will primarily use the new tables.)
+
+
+```sql
+
+    -- ============================================
+    -- 1. DROP EXISTING TABLES (if they exist) to start fresh
+    -- ============================================
+    DROP TABLE IF EXISTS order_items;
+    DROP TABLE IF EXISTS orders;
+    DROP TABLE IF EXISTS departments;
+
+    -- ============================================
+    -- 2. CREATE DEPARTMENTS TABLE (for self join and FK)
+    -- ============================================
+    CREATE TABLE departments (
+        dept_id INT PRIMARY KEY,
+        dept_name VARCHAR(50) NOT NULL,
+        manager_id INT  -- will reference employee_id later
+    );
+
+    -- ============================================
+    -- 3. CREATE ORDERS TABLE (links to customers)
+    -- ============================================
+    CREATE TABLE orders (
+        order_id INT PRIMARY KEY,
+        customer_id INT,
+        order_date DATE,
+        total_amount DECIMAL(10,2)
+    );
+
+    -- ============================================
+    -- 4. CREATE ORDER_ITEMS TABLE (links orders and products)
+    -- ============================================
+    CREATE TABLE order_items (
+        order_id INT,
+        product_id INT,
+        quantity INT,
+        price DECIMAL(10,2)  -- price at time of order
+    );
+
+    -- ============================================
+    -- 5. MODIFY EMPLOYEES TABLE TO INCLUDE dept_id
+    --    (we'll add a department reference)
+    -- ============================================
+    ALTER TABLE employees ADD COLUMN dept_id INT;
+
+    -- ============================================
+    -- 6. INSERT DATA INTO DEPARTMENTS
+    -- ============================================
+    INSERT INTO departments (dept_id, dept_name, manager_id) VALUES
+    (1, 'Sales', 1),      -- John Smith manages Sales
+    (2, 'Marketing', 2),  -- Emma Johnson manages Marketing
+    (3, 'IT', 9),         -- Robert Anderson manages IT
+    (4, 'HR', 8),         -- Linda Taylor manages HR
+    (5, 'Finance', NULL); -- No manager yet
+
+    -- ============================================
+    -- 7. UPDATE EMPLOYEES WITH dept_id
+    -- ============================================
+    UPDATE employees SET dept_id = 1 WHERE employee_id IN (1,3,7);   -- Sales
+    UPDATE employees SET dept_id = 2 WHERE employee_id IN (2,6);     -- Marketing
+    UPDATE employees SET dept_id = 3 WHERE employee_id IN (4,5,9);   -- IT
+    UPDATE employees SET dept_id = 4 WHERE employee_id IN (8,10);    -- HR
+    -- (employee 10 Mary Thomas is HR)
+
+    -- ============================================
+    -- 8. INSERT DATA INTO ORDERS
+    -- ============================================
+    INSERT INTO orders (order_id, customer_id, order_date, total_amount) VALUES
+    (1001, 201, '2024-01-15', 1250.00),
+    (1002, 203, '2024-02-20', 45.50),
+    (1003, 205, '2024-03-05', 999.00),
+    (1004, 202, '2024-04-12', 350.00),
+    (1005, 206, '2024-05-01', 95.00),
+    (1006, 208, '2024-06-10', 250.00),
+    (1007, 201, '2024-06-15', 40.00),
+    (1008, 204, '2024-07-01', 1200.00),
+    (1009, 207, '2024-07-20', 15.00),
+    (1010, 202, '2024-08-01', 25.50);
+
+    -- ============================================
+    -- 9. INSERT DATA INTO ORDER_ITEMS
+    -- ============================================
+    INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
+    (1001, 101, 1, 1200.00),
+    (1001, 108, 2, 15.00),   -- total 1200+30=1230 (but total_amount is 1250, maybe some discount)
+    (1002, 105, 1, 40.00),
+    (1002, 110, 1, 12.00),
+    (1003, 109, 1, 999.00),
+    (1004, 104, 1, 350.00),
+    (1005, 106, 1, 95.00),
+    (1006, 107, 1, 250.00),
+    (1007, 105, 1, 40.00),
+    (1008, 101, 1, 1200.00),
+    (1009, 108, 1, 15.00),
+    (1010, 102, 1, 25.50);
+
+    -- ============================================
+    -- 10. (OPTIONAL) ADD FOREIGN KEY CONSTRAINTS (for practice, but not required for joins)
+    -- ============================================
+    -- ALTER TABLE employees ADD FOREIGN KEY (dept_id) REFERENCES departments(dept_id);
+    -- ALTER TABLE orders ADD FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+    -- ALTER TABLE order_items ADD FOREIGN KEY (order_id) REFERENCES orders(order_id);
+    -- ALTER TABLE order_items ADD FOREIGN KEY (product_id) REFERENCES products(product_id);
+
+```
+
+#### Now we have:
+
+* **departments**: dept_id, dept_name, manager_id
+
+* **employees**: (existing) + dept_id (foreign key to departments)
+
+* **orders**: links to customers (customer_id)
+
+* **order_items**: links orders to products
+
+> We also have the original **products** and **customers** tables.
+
+---
+
+## 📝 PART 5: PRACTICE QUESTIONS + SOLUTIONS (Phase 5 – Joins)
+
+### SECTION A: INNER JOIN (Explicit & Implicit)
+
+---
+
+#### Q1. List all orders with customer names (first and last) and order dates. Use `INNER JOIN`.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        c.first_name, 
+        c.last_name, 
+        o.order_date
+    FROM orders o
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id;
+```        
+</details>
+
+---
+#### Q2. Show product names and their total quantity sold across all orders (using `order_items` and `products`). Use INNER JOIN and GROUP BY.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        SUM(oi.quantity) AS total_sold
+    FROM order_items oi
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    GROUP BY p.product_name;
+```    
+</details>
+
+---
+#### Q3. List employees with their department names (use `employees` and `departments`).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    INNER JOIN departments d ON 
+        e.dept_id = d.dept_id;
+```        
+</details>
+
+---
+#### Q4. Show orders with customer names and the total amount, but only for orders with total_amount > 100.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        c.first_name, 
+        c.last_name, 
+        o.total_amount
+    FROM orders o
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id
+    WHERE o.total_amount > 100;    
+```    
+</details>
+
+
+---
+#### Q5. For each order, list the order_id, customer first name, product name, and quantity ordered (joining orders, customers, order_items, products).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        c.first_name, 
+        p.product_name, 
+        oi.quantity
+    FROM orders o
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id;
+```        
+</details>
+
+
+---
+#### Q6. Find the total number of items (sum of quantity) ordered by each customer (show customer name and total items).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, SUM(oi.quantity) AS total_items
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+#### Q7. Which employees work in departments that have a manager? (Join employees with departments where manager_id IS NOT NULL)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    INNER JOIN departments d ON 
+        e.dept_id = d.dept_id
+    WHERE d.manager_id IS NOT NULL;
+```    
+</details>
+
+---
+#### Q8. List products that have ever been ordered (using INNER JOIN with order_items, distinct).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT p.product_id, p.product_name
+    FROM products p
+    INNER JOIN order_items oi ON 
+        p.product_id = oi.product_id;
+```    
+</details>
+
+---
+#### Q9. Show orders that include at least one Electronics product (category = 'Electronics').
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT o.order_id, o.order_date
+    FROM orders o
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    WHERE p.category = 'Electronics';
+```    
+</details>
+
+---
+#### Q10. Count how many orders each customer has placed (show customer name and order count), only for customers who have placed at least one order.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COUNT(o.order_id) AS order_count
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+
+### SECTION B: LEFT JOIN (and LEFT OUTER JOIN)
+
+---
+#### Q11. List all customers and any orders they have placed (include customers with no orders). Show customer name and order_id (NULL if no orders).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id;
+```
+</details>
+
+---
+#### Q12. List all departments and the employees in each department (including departments with no employees). Show dept_name and employee name (NULL if none).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d.dept_name, 
+        e.first_name, 
+        e.last_name
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id;
+```    
+</details>
+
+---
+#### Q13. Find all products and their total quantity sold (including products that have never been sold). Use LEFT JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        COALESCE(SUM(oi.quantity), 0) AS total_sold
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    GROUP BY p.product_id;
+```    
+</details>
+
+---
+#### Q14. List all employees and their department names; include employees who are not assigned to any department (should have dept_id NULL). (We have none currently, but we'll test.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    LEFT JOIN departments d ON 
+        e.dept_id = d.dept_id;
+```        
+</details>
+
+---
+#### Q15. Show all orders and any order items; include orders that have no items (though we have none). Use LEFT JOIN from orders to order_items.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        oi.product_id, 
+        oi.quantity
+    FROM orders o
+    LEFT JOIN order_items oi ON 
+        o.order_id = oi.order_id;
+```        
+</details>
+
+
+---
+#### Q16. Which customers have not placed any orders? (Use LEFT JOIN with IS NULL)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    WHERE o.order_id IS NULL;
+```    
+</details>
+
+
+---
+#### Q17. List all products and the total revenue generated from each product (sum of quantity * price from order_items), including products with zero revenue. Use LEFT JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        COALESCE(SUM(oi.quantity * oi.price), 0) AS revenue
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    GROUP BY p.product_id;
+```    
+</details>
+
+---
+#### Q18. Show all departments and the number of employees in each (include departments with 0 employees).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d.dept_name, 
+        COUNT(e.employee_id) AS emp_count
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id
+    GROUP BY d.dept_id;
+```    
+</details>
+
+---
+#### Q19. List all customers and the total amount they have spent (sum of order total_amount), including those with zero spend. Use LEFT JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COALESCE(SUM(o.total_amount), 0) AS total_spent
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+#### Q20. Which departments have no employees assigned? (LEFT JOIN with IS NULL)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT d.dept_name
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id
+    WHERE e.employee_id IS NULL;
+```    
+</details>
+
+---
+
+### SECTION C: RIGHT JOIN (and RIGHT OUTER JOIN)
+
+_Note: RIGHT JOIN is the reverse of LEFT JOIN. We can simulate it, but most databases support it. We'll write RIGHT JOIN queries._
+
+---
+#### Q21. List all orders and the customers who placed them, including orders with no matching customer (we have none, but we can test by inserting a dummy order). For now, use RIGHT JOIN to show all customers and their orders (same as LEFT JOIN but reversed).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id
+    FROM orders o
+    RIGHT JOIN customers c ON 
+        o.customer_id = c.customer_id;
+```
+</details>
+
+---
+#### Q22. List all employees and their departments, showing all departments even if no employees, using RIGHT JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    RIGHT JOIN departments d ON 
+        e.dept_id = d.dept_id;
+```        
+</details>
+
+
+---
+#### Q23. Show all products and their order items, using RIGHT JOIN to include all products (same as LEFT JOIN from products).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        oi.order_id, 
+        oi.quantity
+    FROM order_items oi
+    RIGHT JOIN products p ON 
+        oi.product_id = p.product_id;
+```        
+</details>
+
+---
+#### Q24. Which products have never been ordered? (Using RIGHT JOIN with IS NULL)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT p.product_name
+    FROM order_items oi
+    RIGHT JOIN products p ON 
+        oi.product_id = p.product_id
+    WHERE oi.order_id IS NULL;
+```    
+</details>
+
+
+---
+#### Q25. For each department, list the employees, but include departments that have no employees. (Use RIGHT JOIN).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT d.dept_name, e.first_name, e.last_name
+    FROM employees e
+    RIGHT JOIN departments d ON e.dept_id = d.dept_id;
+```    
+</details>
+
+---
+
+### SECTION D: FULL JOIN (Simulated with LEFT JOIN UNION RIGHT JOIN)
+
+_MySQL doesn't support FULL OUTER JOIN natively, but we can emulate using UNION of LEFT and RIGHT. Other DBs like PostgreSQL do. We'll provide both a standard FULL JOIN (for PostgreSQL) and the UNION method (for MySQL)._
+
+
+---
+#### Q26. List all customers and all orders, showing all customers (even without orders) and all orders (even without customers). (If any). Use FULL JOIN.
+
+<details> <summary>Click to reveal answer (MySQL version with UNION)</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    UNION
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id
+    FROM customers c
+    RIGHT JOIN orders o ON 
+        c.customer_id = o.customer_id;
+```
+</details><details> <summary>Click for standard FULL JOIN (PostgreSQL/others)</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id
+    FROM customers c
+    FULL OUTER JOIN orders o ON 
+        c.customer_id = o.customer_id;
+```
+</details>
+
+---
+#### Q27. Combine all employees and all departments, showing every employee and every department, regardless of match (FULL JOIN).
+
+<details> <summary>Click to reveal answer (UNION method)</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    LEFT JOIN departments d ON 
+        e.dept_id = d.dept_id
+    UNION
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    RIGHT JOIN departments d ON 
+        e.dept_id = d.dept_id;
+```    
+</details>
+
+---
+#### Q28. Show all products and all order items, including products with no items and items with no products (though we have referential integrity, but for practice).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        oi.order_id, 
+        oi.quantity
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    UNION
+    SELECT 
+        p.product_name, 
+        oi.order_id, 
+        oi.quantity
+    FROM products p
+    RIGHT JOIN order_items oi ON 
+        p.product_id = oi.product_id;
+```     
+    
+</details>
+
+---
+#### Q29. List all customers and all orders, but include customers with no orders and orders with no customers (if any). Use FULL JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    -- Using LEFT + RIGHT UNION
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id, 
+        o.order_date
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    UNION
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        o.order_id, 
+        o.order_date
+    FROM customers c
+    RIGHT JOIN orders o ON 
+        c.customer_id = o.customer_id;
+```    
+</details>
+
+
+---
+#### Q30. Find employees who are not assigned to any department and departments that have no employees, using FULL JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    LEFT JOIN departments d ON 
+        e.dept_id = d.dept_id
+    WHERE d.dept_id IS NULL
+    UNION
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        d.dept_name
+    FROM employees e
+    RIGHT JOIN departments d ON 
+        e.dept_id = d.dept_id
+    WHERE e.employee_id IS NULL;
+```    
+</details>
+
+---
+#### SECTION E: SELF JOIN
+
+
+
+---
+#### Q31. List each employee along with their manager's name (using the manager_id in departments? Actually we have manager_id in departments, but we want to show employee-manager relationship. We can use self join on employees using a manager_id column – but we don't have that. Instead, we can use the manager_id from departments to join employees who are managers. Let's create a manager column in employees? We'll add a manager_id column to employees for self-join practice.
+
+#### Add manager_id to employees:
+
+```sql
+    ALTER TABLE employees 
+    ADD COLUMN manager_id INT;
+
+    -- Update managers: 
+    -- John Smith (1) manages Sales, so he is manager for employees in dept_id=1 (except himself)
+    -- Emma Johnson (2) manages Marketing
+    -- Robert Anderson (9) manages IT
+    -- Linda Taylor (8) manages HR
+    UPDATE employees 
+    SET manager_id = 1 
+    WHERE dept_id = 1 AND employee_id != 1;
+    
+    UPDATE employees 
+    SET manager_id = 2 
+    WHERE dept_id = 2 AND employee_id != 2;
+
+    UPDATE employees 
+    SET manager_id = 9 
+    WHERE dept_id = 3 AND employee_id != 9;
+
+    UPDATE employees 
+    SET manager_id = 8 
+    WHERE dept_id = 4 AND employee_id != 8;
+
+    -- Set manager for managers themselves to NULL
+    UPDATE employees 
+    SET manager_id = NULL 
+    WHERE employee_id IN (1,2,9,8);
+
+    -- Also set for Mary Thomas (10) who reports to Linda (8)
+    UPDATE employees 
+    SET manager_id = 8 
+    WHERE employee_id = 10;
+```
+#### Now we have a proper self-join column.
+
+
+
+---
+#### Q31. List each employee's name and their manager's name (self join on employees).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, 
+        m.first_name AS manager
+    FROM employees e
+    LEFT JOIN employees m ON 
+        e.manager_id = m.employee_id;
+```    
+</details>
+
+---
+#### Q32. Show employees who earn more than their manager (self join with salary comparison).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, e.salary AS emp_salary,
+        m.first_name AS manager, m.salary AS mgr_salary
+    FROM employees e
+    INNER JOIN employees m ON 
+        e.manager_id = m.employee_id
+    WHERE e.salary > m.salary;
+```    
+</details>
+
+---
+#### Q33. Find all employees who are managers (i.e., they appear as manager_id in any other employee's record). Use self join.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT m.employee_id, 
+        m.first_name, 
+        m.last_name
+    FROM employees e
+    INNER JOIN employees m ON 
+        e.manager_id = m.employee_id;
+```        
+</details>
+
+---
+#### Q34. Count how many employees report to each manager.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        m.employee_id, 
+        m.first_name, 
+        COUNT(e.employee_id) AS reports
+    FROM employees m
+    LEFT JOIN employees e ON 
+        e.manager_id = m.employee_id
+    GROUP BY m.employee_id;
+```    
+</details>
+
+---
+#### Q35. Show employees who work in the same department as their manager (i.e., manager's dept_id = employee's dept_id). Use self join.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, 
+        m.first_name AS manager, 
+        e.dept_id
+    FROM employees e
+    INNER JOIN employees m ON 
+        e.manager_id = m.employee_id
+    WHERE e.dept_id = m.dept_id;
+```    
+</details>
+
+
+---
+#### Q36. Find pairs of employees who have the same manager (use self join on manager_id).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e1.first_name AS emp1, 
+        e2.first_name AS emp2, 
+        e1.manager_id
+    FROM employees e1
+    INNER JOIN employees e2 ON 
+        e1.manager_id = e2.manager_id
+    WHERE e1.employee_id < e2.employee_id;  -- avoid duplicates
+```    
+</details>
+
+---
+#### Q37. List employees who are managers and also have a manager themselves (e.g., middle managers). Use self join with condition.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT e.first_name AS middle_manager
+    FROM employees e
+    WHERE e.manager_id IS NOT NULL
+    AND EXISTS (SELECT 1 
+                FROM employees sub 
+                WHERE sub.manager_id = e.employee_id
+                );
+```                
+</details>
+
+---
+
+### SECTION F: CROSS JOIN
+
+---
+#### Q38. Generate a Cartesian product of all departments and all employees (each employee paired with each department).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        d.dept_name
+    FROM employees e
+    CROSS JOIN departments d;
+```    
+</details>
+
+---
+#### Q39. List all possible combinations of products and customers (useful for marketing).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        c.first_name, 
+        c.last_name
+    FROM products p
+    CROSS JOIN customers c;
+```    
+</details>
+
+
+---
+#### Q40. Create a report of all orders and all order items (though this would be huge – but just for practice).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        oi.order_id AS item_order_id
+    FROM orders o
+    CROSS JOIN order_items oi;
+```    
+</details>
+
+---
+#### Q41. Use CROSS JOIN to get all possible pairs of employees (for comparison). Show employee names.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e1.first_name AS emp1, 
+        e2.first_name AS emp2
+    FROM employees e1
+    CROSS JOIN employees e2
+    WHERE e1.employee_id < e2.employee_id;  -- to avoid duplicates and self-pairs
+```    
+</details>
+
+
+---
+#### Q42. CROSS JOIN departments with itself to find all department pairs (useful for comparisons).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d1.dept_name AS dept1, 
+        d2.dept_name AS dept2
+    FROM departments d1
+    CROSS JOIN departments d2
+    WHERE d1.dept_id < d2.dept_id;
+```    
+</details>
+
+
+---
+#### Q43. Generate a schedule: combine all employees with all possible order dates (just for conceptual practice). (We'll use DISTINCT order dates.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        o.order_date
+    FROM employees e
+    CROSS JOIN (SELECT DISTINCT order_date FROM orders) o;
+```    
+</details>
+
+---
+
+### SECTION G: Mixed Joins & Advanced Scenarios
+
+
+---
+#### Q44. Find customers who have placed orders, but include customer details even if they haven't (LEFT JOIN) and also show total spent. Also show those with zero spent.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COALESCE(SUM(o.total_amount), 0) AS total_spent
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+
+---
+#### Q45. List employees, their department, and their manager's name (self join + department join). Use multiple joins.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, 
+        d.dept_name, 
+        m.first_name AS manager
+    FROM employees e
+    LEFT JOIN departments d ON 
+        e.dept_id = d.dept_id
+    LEFT JOIN employees m ON 
+        e.manager_id = m.employee_id;
+```    
+</details>
+
+---
+#### Q46. Find orders that contain products from multiple categories. (We'll need to join orders, order_items, products, group by order, count distinct categories.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        COUNT(DISTINCT p.category) AS category_count
+    FROM orders o
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    GROUP BY o.order_id
+    HAVING COUNT(DISTINCT p.category) > 1;
+```    
+</details>
+
+---
+#### Q47. For each product, show the total quantity sold and the total revenue, using LEFT JOIN to include products with no sales.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        COALESCE(SUM(oi.quantity), 0) AS total_qty,
+        COALESCE(SUM(oi.quantity * oi.price), 0) AS total_revenue
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    GROUP BY p.product_id;
+```    
+</details>
+
+---
+#### Q48. List customers and the total number of distinct products they have ordered (across all their orders). Use JOINs.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COUNT(DISTINCT p.product_id) AS distinct_products
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+
+---
+#### Q49. Show orders that include the product 'Laptop Pro' (product_id = 101). Use joins.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        o.order_date, 
+        c.first_name
+    FROM orders o
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    WHERE oi.product_id = 101;
+```    
+</details>
+
+
+---
+#### Q50. For each department, show the average salary of employees, and also the department manager's name. Use JOINs.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d.dept_name, 
+        AVG(e.salary) AS avg_salary,
+        m.first_name AS manager_name
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id
+    LEFT JOIN employees m ON 
+        d.manager_id = m.employee_id
+    GROUP BY d.dept_id;
+```    
+</details>
+
+---
+#### Q51. Find customers who have placed orders totaling more than $1000 in total (use HAVING with JOIN).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        SUM(o.total_amount) AS total_spent
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    GROUP BY c.customer_id
+    HAVING SUM(o.total_amount) > 1000;
+```    
+</details>
+
+
+---
+#### Q52. List all products and the number of orders they appear in (not total quantity, but order count). Include products with zero orders.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name, 
+        COUNT(DISTINCT oi.order_id) AS order_count
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    GROUP BY p.product_id;
+```    
+</details>
+
+
+---
+#### Q53. Show employees and their managers, but only for employees who earn less than 70000 and their manager earns more than 80000.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, 
+        e.salary, 
+        m.first_name AS manager, 
+        m.salary
+    FROM employees e
+    INNER JOIN employees m ON 
+        e.manager_id = m.employee_id
+    WHERE e.salary < 70000 AND m.salary > 80000;
+```    
+</details>
+
+---
+#### Q54. List all combinations of employees and departments (CROSS JOIN) but then filter to only those where the employee's department matches the department? That's an INNER JOIN. But for practice, show CROSS JOIN with a WHERE condition to simulate INNER JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        d.dept_name
+    FROM employees e
+    CROSS JOIN departments d
+    WHERE e.dept_id = d.dept_id;  -- essentially an INNER JOIN
+```    
+</details>
+
+
+---
+#### Q55. Use a self join to find employees who have the same last name as another employee (if any).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e1.first_name, 
+        e1.last_name, 
+        e2.first_name, 
+        e2.last_name
+    FROM employees e1
+    INNER JOIN employees e2 ON 
+        e1.last_name = e2.last_name
+    WHERE e1.employee_id < e2.employee_id;
+```    
+</details>
+
+
+---
+#### Q56. For each order, display the order total and also the sum of individual item prices (quantity * price) to check for discrepancies. Join orders with order_items and group.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        o.total_amount AS order_total, 
+        SUM(oi.quantity * oi.price) AS item_total
+    FROM orders o
+    LEFT JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY o.order_id;
+```    
+</details>
+
+---
+#### Q57. List customers who have ordered at least one product from the 'Electronics' category. Use joins and DISTINCT.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT c.first_name, c.last_name
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    WHERE p.category = 'Electronics';
+```    
+</details>
+
+
+---
+#### Q58. Show each product's name and the name of the customer who ordered it most recently? This requires subqueries or window functions – maybe too advanced. Let's skip.
+
+
+
+---
+#### Q59. For each department, show the employee with the highest salary (using self join or subquery). We'll use a self join with a NOT EXISTS condition.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        e.salary, 
+        d.dept_name
+    FROM employees e
+    INNER JOIN departments d ON 
+        e.dept_id = d.dept_id
+    WHERE NOT EXISTS (
+                    SELECT 1 
+                    FROM employees e2 
+                    WHERE e2.dept_id = e.dept_id AND e2.salary > e.salary
+                    );
+```    
+</details>
+
+
+---
+#### Q60. Use a self join to find employees who work in the same department but have different first names (just for fun).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e1.first_name, 
+        e2.first_name, 
+        e1.dept_id
+    FROM employees e1
+    INNER JOIN employees e2 ON 
+        e1.dept_id = e2.dept_id
+    WHERE e1.employee_id < e2.employee_id;
+```    
+</details>
+
+---
+
+### SECTION H: More Complex Join Questions
+
+---
+#### Q61. Find the total revenue generated by each department (by products sold from employees? Actually, departments don't directly link to products. We'll need to join orders -> customers -> maybe customers have no department. So we'll skip.
+
+---
+#### Q62. List orders along with the customer's city and state, using joins.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        o.order_date, 
+        c.first_name, 
+        c.city, 
+        c.state
+    FROM orders o
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id;
+```        
+</details>
+
+---
+#### Q63. Show the total quantity of items ordered by each customer, along with the total amount spent, using joins and GROUP BY.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COALESCE(SUM(oi.quantity), 0) AS total_items,
+        COALESCE(SUM(o.total_amount), 0) AS total_spent
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    LEFT JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+#### Q64. Find products that have been ordered by customers from 'NY' state.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT p.product_name
+    FROM products p
+    INNER JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    INNER JOIN orders o ON 
+        oi.order_id = o.order_id
+    INNER JOIN customers c ON 
+        o.customer_id = c.customer_id
+    WHERE c.state = 'NY';
+```    
+</details>
+
+---
+#### Q65. For each product, list the total number of units sold and the total number of distinct customers who ordered it.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        p.product_name,
+        COALESCE(SUM(oi.quantity), 0) AS total_sold,
+        COUNT(DISTINCT o.customer_id) AS distinct_customers
+    FROM products p
+    LEFT JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    LEFT JOIN orders o ON 
+        oi.order_id = o.order_id
+    GROUP BY p.product_id;
+```    
+</details>
+
+
+---
+#### Q66. Show all departments and the total salary of employees in each, including departments with no employees.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d.dept_name, 
+        COALESCE(SUM(e.salary), 0) AS total_salary
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id
+    GROUP BY d.dept_id;
+```    
+</details>
+
+
+---
+#### Q67. List orders that have more than 2 items (count of order_items rows). Use joins and HAVING.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        o.order_id, 
+        COUNT(oi.product_id) AS item_count
+    FROM orders o
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY o.order_id
+    HAVING COUNT(oi.product_id) > 2;
+```    
+</details>
+
+---
+#### Q68. Find customers who have never placed an order (using LEFT JOIN with NULL check).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name
+    FROM customers c
+    LEFT JOIN orders o ON c.customer_id = o.customer_id
+    WHERE o.order_id IS NULL;
+```    
+</details>
+
+---
+#### Q69. Show each employee's name, department, and the total salary of their department (using a subquery or join with GROUP BY in a derived table – but we can do a join with a subquery in FROM). Since subqueries are not in the list, we can just show the department total alongside each employee using a window function? Not allowed. We'll use a self-join on department total? Better: use a derived table. I'll include it as an extra practice.
+
+<details> <summary>Click to reveal answer (using derived table in FROM)</summary>
+
+```sql
+    SELECT
+        e.first_name,
+        e.last_name,
+        d.dept_name,
+        dept_sums.total_dept_salary
+
+    FROM employees e
+    INNER JOIN departments d 
+        ON e.dept_id = d.dept_id
+    INNER JOIN (
+                SELECT dept_id, SUM(salary) AS total_dept_salary
+                FROM employees
+                GROUP BY dept_id
+    ) dept_sums ON e.dept_id = dept_sums.dept_id;
+```    
+</details>
+
+
+---
+#### Q70. Use a CROSS JOIN to generate a report of all employees and all order dates, then filter to only those where the employee was hired before the order date (just for conceptual practice).
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.hire_date, 
+        o.order_date
+    FROM employees e
+    CROSS JOIN orders o
+    WHERE e.hire_date < o.order_date;
+```    
+</details>
+
+---
+#### Q71. List departments and the number of employees earning above 70000 in each department, using LEFT JOIN and conditional aggregation.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d.dept_name, 
+        COUNT(CASE WHEN e.salary > 70000 THEN 1 END) AS high_earners
+    FROM departments d
+    LEFT JOIN employees e ON 
+        d.dept_id = e.dept_id
+    GROUP BY d.dept_id;
+```    
+</details>
+
+---
+#### Q72. Show customers and the total number of orders they have placed, using a RIGHT JOIN from orders to customers to include customers with no orders.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name, 
+        COUNT(o.order_id) AS order_count
+    FROM orders o
+    RIGHT JOIN customers c ON 
+        o.customer_id = c.customer_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+#### Q73. Find all products that have been sold in orders that were placed after '2024-06-01'.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT p.product_name
+    FROM products p
+    INNER JOIN order_items oi ON 
+        p.product_id = oi.product_id
+    INNER JOIN orders o ON 
+        oi.order_id = o.order_id
+    WHERE o.order_date > '2024-06-01';
+```    
+</details>
+
+---
+#### Q74. List employees and their managers, but include employees who have no manager (e.g., top-level managers) – use LEFT JOIN.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name AS employee, 
+        m.first_name AS manager
+    FROM employees e
+    LEFT JOIN employees m ON 
+        e.manager_id = m.employee_id;
+```    
+</details>
+
+---
+#### Q75. Use a self join to find employees who have the same first name as another employee (if any). (We have John and James – not same, but we'll try.)
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e1.first_name, 
+        e2.first_name
+    FROM employees e1
+    INNER JOIN employees e2 ON 
+        e1.first_name = e2.first_name
+    WHERE e1.employee_id < e2.employee_id;
+```    
+</details>
+
+---
+#### Q76. For each order, list the order_id, total amount, and the total quantity of items (sum of quantities). Use joins and GROUP BY.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT
+        o.order_id,
+        o.total_amount,
+        COALESCE(SUM(oi.quantity), 0) AS total_qty
+    FROM orders o
+    LEFT JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY o.order_id;
+```    
+</details>
+
+
+---
+#### Q77. Show the maximum salary in each department, along with the employee name who earns it (use a self join or subquery). We'll use a self join with NOT EXISTS.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        e.first_name, 
+        e.last_name, 
+        e.salary, 
+        d.dept_name
+    FROM employees e
+    INNER JOIN departments d ON 
+        e.dept_id = d.dept_id
+    WHERE NOT EXISTS (
+                    SELECT 1 
+                    FROM employees e2 
+                    WHERE e2.dept_id = e.dept_id AND e2.salary > e.salary 
+                    );
+```    
+</details>
+
+---
+#### Q78. List all possible pairs of departments (CROSS JOIN) – useful for comparison.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        d1.dept_name AS dept1, 
+        d2.dept_name AS dept2
+    FROM departments d1
+    CROSS JOIN departments d2
+    WHERE d1.dept_id < d2.dept_id;
+```    
+</details>
+
+---
+#### Q79. Find customers who have placed orders that include the most expensive product (price > 500). Use joins.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT DISTINCT 
+        c.first_name, 
+        c.last_name
+    FROM customers c
+    INNER JOIN orders o ON 
+        c.customer_id = o.customer_id
+    INNER JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    INNER JOIN products p ON 
+        oi.product_id = p.product_id
+    WHERE p.price > 500;
+```    
+</details>
+
+---
+#### Q80. Create a report showing for each customer: their name, total orders, total items ordered, and total amount spent. Use LEFT JOIN to include customers with no orders.
+
+<details> <summary>Click to reveal answer</summary>
+
+```sql
+    SELECT 
+        c.first_name, 
+        c.last_name,
+        COUNT(DISTINCT o.order_id) AS total_orders,
+        COALESCE(SUM(oi.quantity), 0) AS total_items,
+        COALESCE(SUM(o.total_amount), 0) AS total_spent
+    FROM customers c
+    LEFT JOIN orders o ON 
+        c.customer_id = o.customer_id
+    LEFT JOIN order_items oi ON 
+        o.order_id = oi.order_id
+    GROUP BY c.customer_id;
+```    
+</details>
+
+---
+#### That's 80 practice questions covering all join types extensively. 
+
+---
+### 📌 Final Notes:
+
+* INNER JOIN returns matching rows.
+
+* LEFT JOIN returns all rows from left table, matching rows from right, or NULL.
+
+* RIGHT JOIN is the reverse.
+
+* FULL JOIN (simulated) returns all rows from both tables.
+
+* SELF JOIN joins a table to itself.
+
+* CROSS JOIN returns the Cartesian product.
+
+> We also combined joins with GROUP BY, WHERE, and HAVING to make them realistic.
+
+
+
+---
+<br/><br/><br/><br/>
+
+#### Happy Practicing! 😊✨
+
+<br/><br/><br/><br/>
+
+---
